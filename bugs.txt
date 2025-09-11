@@ -1,0 +1,22 @@
+Title: 6th account limit message is split accross two lines
+Area: Create Account -> The 5 Account Maximum
+
+Instructions to reproduce bug is:
+- Create 5 valid accounts
+- From the main menu, enter 2 (Create New Account) one more time.
+- The expected message should be all in one single line:
+    "All permitted accounts have been created, please come back later"
+
+- The actual message is printed on two different lines:
+    "All permitted accounts have been created,
+    please come back later"
+
+Title: Login to an existing account fails across separate runs
+Steps to reproduce:
+	1.	Start with an empty accounts.dat.
+	2.	Create a user (e.g., user1 / TeamVA5!).
+	3.	Stop the program. (Just clear out InCollege-Input.txt)
+	4.	Start the program again and try to log in with that username/password.
+Expected: You have successfully logged in
+Actual: Incorrect username/password, please try again.
+Notes: Login works only when account creation and login are in the same run. Across runs, even though accounts.dat contains the user, login fails. Likely due to how the password hash length (WS-CHAR-COUNT) is set in the COBOL code. But could be another reason.

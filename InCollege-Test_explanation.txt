@@ -1,0 +1,5 @@
+Lines 1–15 -> 5 invalid-password cases.
+Lines 16–30 -> 5 valid account creations.
+Line 31 (2) -> 6th account attempt → limit message.
+Lines 32–35 -> login fail then login success.
+Lines 36–41 -> menu coverage: Job, Find, Learn, Skill 1, Learn again, Go Back.
