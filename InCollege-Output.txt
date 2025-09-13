@@ -1,188 +1,133 @@
-Error: Invalid account record format
+DEBUG: Read profile for username = alice123
+DEBUG: Loaded profile for alice123 at index 02
 Welcome to InCollege!
-Log In
-Create New Account
+1. Log In
+2. Create New Account
+3. Exit
 Enter your choice:
-All permitted accounts have been created, please come back later
+Please enter username:
+Username already exists!
 Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-All permitted accounts have been created, please come back later
-Welcome to InCollege!
-Log In
-Create New Account
+1. Log In
+2. Create New Account
+3. Exit
 Enter your choice:
 Invalid choice
 Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-All permitted accounts have been created, please come back later
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-All permitted accounts have been created, please come back later
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-All permitted accounts have been created, please come back later
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-All permitted accounts have been created, please come back later
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-All permitted accounts have been created, please come back later
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-All permitted accounts have been created, please come back later
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-All permitted accounts have been created, please come back later
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-All permitted accounts have been created, please come back later
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-Invalid choice
-Welcome to InCollege!
-Log In
-Create New Account
-Enter your choice:
-All permitted accounts have been created, please come back later
-Welcome to InCollege!
-Log In
-Create New Account
+1. Log In
+2. Create New Account
+3. Exit
 Enter your choice:
 Please enter username:
 Please enter password:
-Incorrect username/password, please try again
-Incorrect username/password, please try again
+You have successfully logged in.
+Welcome,alice123!
+DEBUG: Found user index = 02 for username = alice123
+1. Create/Edit My Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. Log Out
+Enter your choice:
+--- Create/Edit Profile ---
+Enter First Name:
+Enter Last Name:
+Enter University/College Attended:
+Enter Major:
+Enter Graduation Year (YYYY):
+DEBUG: Trimmed WS-GRAD = '2025
+DEBUG: WS-CHAR-COUNT = 04
+DEBUG: WS-GRAD-YEAR = 2025
+Enter About Me (optional, max 200 chars, enter blank line to skip):
+Add Experience (optional, max 3 entries. Enter 'DONE' to finish):
+Experience #01 - Title:
+Experience #01 - Company/Organization:
+Experience #01 - Dates (e.g., Summer 2024):
+Experience #01 - Description (optional, max 100 chars, blank to skip):
+Experience #02 - Title:
+Add Education (optional, max 3 entries. Enter 'DONE' to finish):
+Education #01 - Degree:
+Education #01 - University/College:
+Education #01 - Years Attended
+Enter Start Year (YYYY, e.g., 2019):
+DEBUG: Trimmed Start Year = '2021
+DEBUG: WS-CHAR-COUNT = 04
+DEBUG: WS-START-YEAR = 2021
+Enter End Year (YYYY, e.g., 2023):
+DEBUG: Trimmed End Year = '2025
+DEBUG: WS-CHAR-COUNT = 04
+DEBUG: WS-END-YEAR = 2025
+Add Education (optional, max 3 entries. Enter 'DONE' to finish):
+Education #02 - Degree:
+DEBUG: Wrote profile for username = alice123
+Profile saved successfully!
 Welcome to InCollege!
-Log In
-Create New Account
+1. Log In
+2. Create New Account
+3. Exit
 Enter your choice:
 Please enter username:
 Please enter password:
-You have successfully logged in
-Welcome, user3!
-Search for a job
-Find someone that you know
-Learn a new skill
+You have successfully logged in.
+Welcome,alice123!
+DEBUG: Found user index = 02 for username = alice123
+1. Create/Edit My Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. Log Out
 Enter your choice:
-Job search/internship is under construction.
-Search for a job
-Find someone that you know
-Learn a new skill
+DEBUG: Displaying profile for index = 02
+--- Your Profile ---
+DEBUG: First Name = Alice
+Name:Alice Smith
+University:Tech University
+Major:Information Technology
+Graduation Year:2025
+About Me:Aspiring IT professional interested in cybersecurity and networking.
+Experience:
+DEBUG: Experience 01 Title = Intern
+Title:Intern
+Company:NetSecure Inc
+Dates:Summer 2024
+Description:Worked on security audits and vulnerability testing.
+Education:
+DEBUG: Education 01 Degree = BSc in Information Technology
+Degree:BSc in Information Technology
+University:Tech University
+Years:2021-2025
+--------------------
+1. Create/Edit My Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. Log Out
 Enter your choice:
-Find someone you know is under construction.
-Search for a job
-Find someone that you know
-Learn a new skill
+DEBUG: Displaying profile for index = 02
+--- Your Profile ---
+DEBUG: First Name = Alice
+Name:Alice Smith
+University:Tech University
+Major:Information Technology
+Graduation Year:2025
+About Me:Aspiring IT professional interested in cybersecurity and networking.
+Experience:
+DEBUG: Experience 01 Title = Intern
+Title:Intern
+Company:NetSecure Inc
+Dates:Summer 2024
+Description:Worked on security audits and vulnerability testing.
+Education:
+DEBUG: Education 01 Degree = BSc in Information Technology
+Degree:BSc in Information Technology
+University:Tech University
+Years:2021-2025
+--------------------
+1. Create/Edit My Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. Log Out
 Enter your choice:
 Learn a New Skill:
 Skill 1
@@ -201,12 +146,8 @@ Skill 4
 Skill 5
 Go Back
 Enter your choice:
-This skill is under construction.
-Learn a New Skill:
-Skill 1
-Skill 2
-Skill 3
-Skill 4
-Skill 5
-Go Back
+Welcome to InCollege!
+1. Log In
+2. Create New Account
+3. Exit
 Enter your choice:

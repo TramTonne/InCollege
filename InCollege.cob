@@ -1,6 +1,5 @@
 IDENTIFICATION DIVISION.
 PROGRAM-ID. INCOLLEGE.
-
 ENVIRONMENT DIVISION.
 INPUT-OUTPUT SECTION.
 FILE-CONTROL.
@@ -10,7 +9,8 @@ FILE-CONTROL.
     ORGANIZATION IS LINE SEQUENTIAL.
     SELECT ACCOUNTS-FILE ASSIGN TO "accounts.dat"
     ORGANIZATION IS LINE SEQUENTIAL.
-
+    SELECT PROFILES-FILE ASSIGN TO "profiles.dat"
+    ORGANIZATION IS LINE SEQUENTIAL.
 DATA DIVISION.
 FILE SECTION.
 FD INPUT-FILE.
@@ -22,6 +22,24 @@ FD ACCOUNTS-FILE.
    05 ACCOUNT-USERNAME PIC X(20).
    05 ACCOUNT-PASSWORD PIC X(12).
    05 ACCOUNT-PASSWORD-LENGTH PIC 9(2).
+FD PROFILES-FILE.
+01 PROFILE-RECORD.
+   05 PROFILE-USERNAME PIC X(20).
+   05 PROFILE-FIRST-NAME PIC X(20).
+   05 PROFILE-LAST-NAME PIC X(20).
+   05 PROFILE-UNIVERSITY PIC X(50).
+   05 PROFILE-MAJOR PIC X(50).
+   05 PROFILE-GRAD-YEAR PIC 9(4).
+   05 PROFILE-ABOUT PIC X(200).
+   05 PROFILE-EXPERIENCE OCCURS 3 TIMES.
+      10 EXP-TITLE PIC X(50).
+      10 EXP-COMPANY PIC X(50).
+      10 EXP-DATES PIC X(30).
+      10 EXP-DESC PIC X(100).
+   05 PROFILE-EDUCATION OCCURS 3 TIMES.
+      10 EDU-DEGREE PIC X(50).
+      10 EDU-UNIVERSITY PIC X(50).
+      10 EDU-YEARS PIC X(30).
 WORKING-STORAGE SECTION.
 01 WS-FLAGS.
    05 WS-EOF-FLAG PIC X VALUE 'N'.
@@ -29,64 +47,145 @@ WORKING-STORAGE SECTION.
    05 WS-ACCOUNT-EXISTS PIC X VALUE 'N'.
    05 WS-LOGGED-IN PIC X VALUE 'N'.
    05 WS-EXIT-FLAG PIC X VALUE 'N'.
+   05 WS-VALID-FIELD PIC X VALUE 'N'.
 01 WS-COUNTERS.
    05 WS-ACCOUNT-COUNT PIC 9(2) VALUE 0.
    05 WS-CHAR-COUNT PIC 9(2) VALUE 0.
    05 WS-UPPER-COUNT PIC 9(2) VALUE 0.
    05 WS-DIGIT-COUNT PIC 9(2) VALUE 0.
    05 WS-SPECIAL-COUNT PIC 9(2) VALUE 0.
+   05 WS-EXP-COUNT PIC 9(1) VALUE 0.
+   05 WS-EDU-COUNT PIC 9(1) VALUE 0.
+   05 WS-RETRY-COUNT PIC 9(2) VALUE 0.
 01 WS-INPUT-DATA.
    05 WS-MENU-CHOICE PIC X(2).
    05 WS-USERNAME PIC X(20).
    05 WS-PASSWORD PIC X(12).
    05 WS-SKILL-CHOICE PIC X(2).
+   05 WS-FIRST-NAME PIC X(20).
+   05 WS-LAST-NAME PIC X(20).
+   05 WS-UNIVERSITY PIC X(50).
+   05 WS-MAJOR PIC X(50).
+   05 WS-GRAD PIC X(10).
+   05 WS-GRAD-YEAR PIC 9(4).
+   05 WS-ABOUT PIC X(200).
+   05 WS-TEMP-INPUT PIC X(50).
+   05 WS-EXP-TITLE PIC X(50).
+   05 WS-EXP-COMPANY PIC X(50).
+   05 WS-EXP-DATES PIC X(30).
+   05 WS-EXP-DESC PIC X(100).
+   05 WS-EDU-DEGREE PIC X(50).
+   05 WS-EDU-UNIVERSITY PIC X(50).
+   05 WS-EDU-YEARS PIC X(30).
+   05 WS-START-YEAR PIC 9(4).
+   05 WS-END-YEAR PIC 9(4).
 01 WS-TEMP-VARS.
    05 WS-CHAR PIC X.
    05 WS-INDEX PIC 9(2).
+   05 WS-INDEX2 PIC 9(2).
    05 WS-PASSWORD-LENGTH PIC 9(2).
    05 WS-HASHED-PASSWORD PIC X(12).
    05 WS-REVERSE-INDEX PIC 9(2).
    05 WS-WELCOME-PERSONAL PIC X(50).
    05 WS-TRIMMED-USERNAME PIC X(20).
    05 WS-TRIMMED-PASSWORD PIC X(12).
+   05 WS-TRIMMED-FIELD PIC X(200).
+   05 WS-CURRENT-USER-INDEX PIC 9(2).
 01 WS-MESSAGES.
-   05 WS-WELCOME-MSG PIC X(30) VALUE "Welcome to InCollege!".
-   05 WS-MENU-OPT1 PIC X(20) VALUE "Log In".
-   05 WS-MENU-OPT2 PIC X(25) VALUE "Create New Account".
-   05 WS-CHOICE-PROMPT PIC X(20) VALUE "Enter your choice: ".
-   05 WS-USERNAME-PROMPT PIC X(25) VALUE "Please enter username: ".
-   05 WS-PASSWORD-PROMPT PIC X(25) VALUE "Please enter password: ".
-   05 WS-SUCCESS-MSG PIC X(40) VALUE "Account successfully created!".
+   05 WS-WELCOME-MSG PIC X(80) VALUE "Welcome to InCollege!".
+   05 WS-MENU-OPT1 PIC X(80) VALUE "1. Log In".
+   05 WS-MENU-OPT2 PIC X(80) VALUE "2. Create New Account".
+   05 WS-CHOICE-PROMPT PIC X(80) VALUE "Enter your choice: ".
+   05 WS-USERNAME-PROMPT PIC X(80) VALUE "Please enter username: ".
+   05 WS-PASSWORD-PROMPT PIC X(80) VALUE "Please enter password: ".
+   05 WS-SUCCESS-MSG PIC X(80) VALUE "Account successfully created!".
    05 WS-LIMIT-MSG PIC X(80) VALUE "All permitted accounts have been created, please come back later".
-   05 WS-EXISTS-MSG PIC X(30) VALUE "Username already exists!".
-   05 WS-INVALID-PASS-MSG PIC X(40) VALUE "Password does not meet requirements!".
-   05 WS-PASS-REQ-MSG1 PIC X(40) VALUE "Password must be 8-12 characters,".
-   05 WS-PASS-REQ-MSG2 PIC X(40) VALUE "contain 1 uppercase, 1 digit,".
-   05 WS-PASS-REQ-MSG3 PIC X(30) VALUE "and 1 special character.".
-   05 WS-LOGIN-SUCCESS PIC X(31) VALUE "You have successfully logged in".
-   05 WS-LOGIN-FAIL PIC X(46) VALUE "Incorrect username/password, please try again".
-   05 WS-UNDER-JOB PIC X(45) VALUE "Job search/internship is under construction.".
-   05 WS-UNDER-FIND PIC X(45) VALUE "Find someone you know is under construction.".
-   05 WS-UNDER-SKILL PIC X(35) VALUE "This skill is under construction.".
-   05 WS-JOB-SEARCH PIC X(30) VALUE "Search for a job".
-   05 WS-FIND-SOMEONE PIC X(30) VALUE "Find someone that you know".
-   05 WS-LEARN-SKILL PIC X(30) VALUE "Learn a new skill".
-   05 WS-SKILL-TITLE PIC X(20) VALUE "Learn a New Skill:".
-   05 WS-SKILL1 PIC X(20) VALUE "Skill 1".
-   05 WS-SKILL2 PIC X(20) VALUE "Skill 2".
-   05 WS-SKILL3 PIC X(20) VALUE "Skill 3".
-   05 WS-SKILL4 PIC X(20) VALUE "Skill 4".
-   05 WS-SKILL5 PIC X(20) VALUE "Skill 5".
-   05 WS-SKILL6 PIC X(15) VALUE "Go Back".
-   05 WS-INVALID-CHOICE PIC X(15) VALUE "Invalid choice".
-   05 WS-WELCOME-PREFIX PIC X(9) VALUE "Welcome, ".
-   05 WS-WELCOME-SUFFIX PIC X(1) VALUE "!".
-   05 WS-ERROR-MSG PIC X(50) VALUE "Error: Invalid account record format".
+   05 WS-EXISTS-MSG PIC X(80) VALUE "Username already exists!".
+   05 WS-INVALID-PASS-MSG PIC X(80) VALUE "Password does not meet requirements!".
+   05 WS-PASS-REQ-MSG1 PIC X(80) VALUE "Password must be 8-12 characters,".
+   05 WS-PASS-REQ-MSG2 PIC X(80) VALUE "contain 1 uppercase, 1 digit,".
+   05 WS-PASS-REQ-MSG3 PIC X(80) VALUE "and 1 special character.".
+   05 WS-LOGIN-SUCCESS PIC X(80) VALUE "You have successfully logged in.".
+   05 WS-LOGIN-FAIL PIC X(80) VALUE "Incorrect username/password, please try again".
+   05 WS-UNDER-JOB PIC X(80) VALUE "Job search/internship is under construction.".
+   05 WS-UNDER-FIND PIC X(80) VALUE "Find someone you know is under construction.".
+   05 WS-UNDER-SKILL PIC X(80) VALUE "This skill is under construction.".
+   05 WS-UNDER-SEARCH PIC X(80) VALUE "Search for User is under construction.".
+   05 WS-PROFILE-CREATE PIC X(80) VALUE "1. Create/Edit My Profile".
+   05 WS-PROFILE-VIEW PIC X(80) VALUE "2. View My Profile".
+   05 WS-SEARCH-USER PIC X(80) VALUE "3. Search for User".
+   05 WS-LEARN-SKILL PIC X(80) VALUE "4. Learn a New Skill".
+   05 WS-SKILL-TITLE PIC X(80) VALUE "Learn a New Skill:".
+   05 WS-SKILL1 PIC X(80) VALUE "Skill 1".
+   05 WS-SKILL2 PIC X(80) VALUE "Skill 2".
+   05 WS-SKILL3 PIC X(80) VALUE "Skill 3".
+   05 WS-SKILL4 PIC X(80) VALUE "Skill 4".
+   05 WS-SKILL5 PIC X(80) VALUE "Skill 5".
+   05 WS-SKILL6 PIC X(80) VALUE "Go Back".
+   05 WS-INVALID-CHOICE PIC X(80) VALUE "Invalid choice".
+   05 WS-WELCOME-PREFIX PIC X(80) VALUE "Welcome, ".
+   05 WS-WELCOME-SUFFIX PIC X(80) VALUE "!".
+   05 WS-ERROR-MSG PIC X(80) VALUE "Error: Invalid account record format".
+   05 WS-PROFILE-HEADER PIC X(80) VALUE "--- Create/Edit Profile ---".
+   05 WS-FIRST-PROMPT PIC X(80) VALUE "Enter First Name: ".
+   05 WS-LAST-PROMPT PIC X(80) VALUE "Enter Last Name: ".
+   05 WS-UNIV-PROMPT PIC X(80) VALUE "Enter University/College Attended: ".
+   05 WS-MAJOR-PROMPT PIC X(80) VALUE "Enter Major: ".
+   05 WS-GRAD-PROMPT PIC X(80) VALUE "Enter Graduation Year (YYYY): ".
+   05 WS-ABOUT-PROMPT PIC X(80) VALUE "Enter About Me (optional, max 200 chars, enter blank line to skip): ".
+   05 WS-EXP-PROMPT PIC X(80) VALUE "Add Experience (optional, max 3 entries. Enter 'DONE' to finish): ".
+   05 WS-EXP-TITLE-PROMPT PIC X(80).
+   05 WS-EXP-COMP-PROMPT PIC X(80).
+   05 WS-EXP-DATES-PROMPT PIC X(80).
+   05 WS-EXP-DESC-PROMPT PIC X(80).
+   05 WS-EDU-PROMPT PIC X(80) VALUE "Add Education (optional, max 3 entries. Enter 'DONE' to finish): ".
+   05 WS-EDU-DEGREE-PROMPT PIC X(80).
+   05 WS-EDU-UNIV-PROMPT PIC X(80).
+   05 WS-EDU-YEARS-PROMPT PIC X(80).
+   05 WS-EDU-START-YEAR-PROMPT PIC X(80) VALUE "Enter Start Year (YYYY, e.g., 2019): ".
+   05 WS-EDU-END-YEAR-PROMPT PIC X(80) VALUE "Enter End Year (YYYY, e.g., 2023): ".
+   05 WS-PROFILE-SAVED PIC X(80) VALUE "Profile saved successfully!".
+   05 WS-REQUIRED-MSG PIC X(80) VALUE "This field is required.".
+   05 WS-INVALID-YEAR PIC X(80) VALUE "Invalid year. Must be a 4-digit number between 1900-2035.".
+   05 WS-INVALID-YEARS PIC X(80) VALUE "Invalid years. Start year must be <= end year, both between 1900-2035.".
+   05 WS-VIEW-HEADER PIC X(80) VALUE "--- Your Profile ---".
+   05 WS-NAME-LABEL PIC X(80) VALUE "Name: ".
+   05 WS-UNIV-LABEL PIC X(80) VALUE "University: ".
+   05 WS-MAJOR-LABEL PIC X(80) VALUE "Major: ".
+   05 WS-GRAD-LABEL PIC X(80) VALUE "Graduation Year: ".
+   05 WS-ABOUT-LABEL PIC X(80) VALUE "About Me: ".
+   05 WS-EXP-LABEL PIC X(80) VALUE "Experience: ".
+   05 WS-TITLE-LABEL PIC X(80) VALUE "Title: ".
+   05 WS-COMP-LABEL PIC X(80) VALUE "Company: ".
+   05 WS-DATES-LABEL PIC X(80) VALUE "Dates: ".
+   05 WS-DESC-LABEL PIC X(80) VALUE "Description: ".
+   05 WS-EDU-LABEL PIC X(80) VALUE "Education: ".
+   05 WS-DEGREE-LABEL PIC X(80) VALUE "Degree: ".
+   05 WS-EDU-UNIV-LABEL PIC X(80) VALUE "University: ".
+   05 WS-YEARS-LABEL PIC X(80) VALUE "Years: ".
+   05 WS-NO-PROFILE PIC X(80) VALUE "No profile created yet.".
+   05 WS-SEPARATOR PIC X(80) VALUE "--------------------".
 01 WS-STORED-ACCOUNTS.
    05 WS-ACCOUNT OCCURS 5 TIMES.
       10 WS-STORED-USERNAME PIC X(20).
       10 WS-STORED-PASSWORD PIC X(12).
       10 WS-STORED-PASSWORD-LENGTH PIC 9(2).
+      10 WS-STORED-HAS-PROFILE PIC X VALUE 'N'.
+      10 WS-STORED-FIRST-NAME PIC X(20).
+      10 WS-STORED-LAST-NAME PIC X(20).
+      10 WS-STORED-UNIVERSITY PIC X(50).
+      10 WS-STORED-MAJOR PIC X(50).
+      10 WS-STORED-GRAD-YEAR PIC 9(4).
+      10 WS-STORED-ABOUT PIC X(200).
+      10 WS-STORED-EXPERIENCE OCCURS 3 TIMES.
+         15 WS-EXP-TITLE PIC X(50).
+         15 WS-EXP-COMPANY PIC X(50).
+         15 WS-EXP-DATES PIC X(30).
+         15 WS-EXP-DESC PIC X(100).
+      10 WS-STORED-EDUCATION OCCURS 3 TIMES.
+         15 WS-EDU-DEGREE PIC X(50).
+         15 WS-EDU-UNIVERSITY PIC X(50).
+         15 WS-EDU-YEARS PIC X(30).
 PROCEDURE DIVISION.
 MAIN-PROGRAM.
     PERFORM INITIALIZATION
@@ -97,6 +196,7 @@ INITIALIZATION.
     OPEN INPUT INPUT-FILE
     OPEN OUTPUT OUTPUT-FILE
     PERFORM LOAD-EXISTING-ACCOUNTS
+    PERFORM LOAD-EXISTING-PROFILES
     PERFORM DISPLAY-WELCOME.
 LOAD-EXISTING-ACCOUNTS.
     OPEN INPUT ACCOUNTS-FILE
@@ -120,6 +220,67 @@ LOAD-EXISTING-ACCOUNTS.
         END-READ
     END-PERFORM
     CLOSE ACCOUNTS-FILE
+    MOVE 'N' TO WS-EOF-FLAG.
+LOAD-EXISTING-PROFILES.
+    OPEN INPUT PROFILES-FILE
+    MOVE 'N' TO WS-EOF-FLAG
+    PERFORM UNTIL WS-EOF-FLAG = 'Y'
+        READ PROFILES-FILE
+            AT END
+                MOVE 'Y' TO WS-EOF-FLAG
+            NOT AT END
+                MOVE SPACES TO OUTPUT-RECORD
+                STRING "DEBUG: Read profile for username = " FUNCTION TRIM(PROFILE-USERNAME)
+                       INTO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+                MOVE 1 TO WS-INDEX
+                PERFORM UNTIL WS-INDEX > WS-ACCOUNT-COUNT
+                    IF FUNCTION TRIM(PROFILE-USERNAME) = FUNCTION TRIM(WS-STORED-USERNAME(WS-INDEX))
+                        MOVE 'Y' TO WS-STORED-HAS-PROFILE(WS-INDEX)
+                        MOVE PROFILE-FIRST-NAME TO WS-STORED-FIRST-NAME(WS-INDEX)
+                        MOVE PROFILE-LAST-NAME TO WS-STORED-LAST-NAME(WS-INDEX)
+                        MOVE PROFILE-UNIVERSITY TO WS-STORED-UNIVERSITY(WS-INDEX)
+                        MOVE PROFILE-MAJOR TO WS-STORED-MAJOR(WS-INDEX)
+                        MOVE PROFILE-GRAD-YEAR TO WS-STORED-GRAD-YEAR(WS-INDEX)
+                        MOVE PROFILE-ABOUT TO WS-STORED-ABOUT(WS-INDEX)
+                        MOVE SPACES TO OUTPUT-RECORD
+                        STRING "DEBUG: Loaded profile for " FUNCTION TRIM(PROFILE-USERNAME)
+                               " at index " WS-INDEX
+                               INTO OUTPUT-RECORD
+                        WRITE OUTPUT-RECORD
+                        DISPLAY OUTPUT-RECORD
+                        PERFORM VARYING WS-INDEX2 FROM 1 BY 1 UNTIL WS-INDEX2 > 3
+                            MOVE EXP-TITLE OF PROFILE-EXPERIENCE(WS-INDEX2)
+                                 TO WS-EXP-TITLE OF WS-STORED-EXPERIENCE(WS-INDEX, WS-INDEX2)
+                            MOVE EXP-COMPANY OF PROFILE-EXPERIENCE(WS-INDEX2)
+                                 TO WS-EXP-COMPANY OF WS-STORED-EXPERIENCE(WS-INDEX, WS-INDEX2)
+                            MOVE EXP-DATES OF PROFILE-EXPERIENCE(WS-INDEX2)
+                                 TO WS-EXP-DATES OF WS-STORED-EXPERIENCE(WS-INDEX, WS-INDEX2)
+                            MOVE EXP-DESC OF PROFILE-EXPERIENCE(WS-INDEX2)
+                                 TO WS-EXP-DESC OF WS-STORED-EXPERIENCE(WS-INDEX, WS-INDEX2)
+                            MOVE EDU-DEGREE OF PROFILE-EDUCATION(WS-INDEX2)
+                                 TO WS-EDU-DEGREE OF WS-STORED-EDUCATION(WS-INDEX, WS-INDEX2)
+                            MOVE EDU-UNIVERSITY OF PROFILE-EDUCATION(WS-INDEX2)
+                                 TO WS-EDU-UNIVERSITY OF WS-STORED-EDUCATION(WS-INDEX, WS-INDEX2)
+                            MOVE EDU-YEARS OF PROFILE-EDUCATION(WS-INDEX2)
+                                 TO WS-EDU-YEARS OF WS-STORED-EDUCATION(WS-INDEX, WS-INDEX2)
+                        END-PERFORM
+                        EXIT PERFORM
+                    END-IF
+                    ADD 1 TO WS-INDEX
+                END-PERFORM
+                IF WS-INDEX > WS-ACCOUNT-COUNT
+                    MOVE SPACES TO OUTPUT-RECORD
+                    STRING "DEBUG: No matching account for profile username = "
+                           FUNCTION TRIM(PROFILE-USERNAME)
+                           INTO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY OUTPUT-RECORD
+                END-IF
+        END-READ
+    END-PERFORM
+    CLOSE PROFILES-FILE
     MOVE 'N' TO WS-EOF-FLAG.
 DISPLAY-WELCOME.
     MOVE WS-WELCOME-MSG TO OUTPUT-RECORD
@@ -150,7 +311,7 @@ MAIN-LOOP.
                     DISPLAY WS-INVALID-CHOICE
                     PERFORM DISPLAY-WELCOME
             END-EVALUATE
-    END-READ.
+        END-READ.
 CREATE-ACCOUNT-PROCESS.
     IF WS-ACCOUNT-COUNT >= 5
         MOVE WS-LIMIT-MSG TO OUTPUT-RECORD
@@ -180,7 +341,7 @@ GET-USERNAME.
             MOVE FUNCTION TRIM(WS-USERNAME) TO WS-TRIMMED-USERNAME
             MOVE WS-TRIMMED-USERNAME TO WS-USERNAME
             PERFORM CHECK-USERNAME-EXISTS
-    END-READ.
+        END-READ.
 CHECK-USERNAME-EXISTS.
     MOVE 'N' TO WS-ACCOUNT-EXISTS
     MOVE 1 TO WS-INDEX
@@ -206,7 +367,7 @@ GET-PASSWORD.
                 MOVE FUNCTION TRIM(WS-PASSWORD) TO WS-TRIMMED-PASSWORD
                 MOVE WS-TRIMMED-PASSWORD TO WS-PASSWORD
                 PERFORM VALIDATE-PASSWORD
-        END-READ
+            END-READ
     END-IF.
 VALIDATE-PASSWORD.
     MOVE 0 TO WS-CHAR-COUNT
@@ -299,7 +460,7 @@ LOGIN-PROCESS.
             NOT AT END
                 MOVE FUNCTION TRIM(WS-USERNAME) TO WS-TRIMMED-USERNAME
                 MOVE WS-TRIMMED-USERNAME TO WS-USERNAME
-        END-READ
+            END-READ
         IF WS-EOF-FLAG = 'Y'
             EXIT PERFORM
         END-IF
@@ -312,7 +473,7 @@ LOGIN-PROCESS.
             NOT AT END
                 MOVE FUNCTION TRIM(WS-PASSWORD) TO WS-TRIMMED-PASSWORD
                 MOVE WS-TRIMMED-PASSWORD TO WS-PASSWORD
-        END-READ
+            END-READ
         IF WS-EOF-FLAG = 'Y'
             EXIT PERFORM
         END-IF
@@ -321,7 +482,6 @@ LOGIN-PROCESS.
             MOVE WS-LOGIN-FAIL TO OUTPUT-RECORD
             WRITE OUTPUT-RECORD
             DISPLAY WS-LOGIN-FAIL
-            PERFORM DISPLAY-WELCOME
             MOVE 'N' TO WS-EOF-FLAG
         END-IF
     END-PERFORM
@@ -330,13 +490,35 @@ LOGIN-PROCESS.
         WRITE OUTPUT-RECORD
         DISPLAY WS-LOGIN-SUCCESS
         STRING WS-WELCOME-PREFIX DELIMITED BY SIZE
-               FUNCTION TRIM(WS-USERNAME) DELIMITED BY SPACE
+               FUNCTION TRIM(WS-USERNAME) DELIMITED BY SIZE
                WS-WELCOME-SUFFIX DELIMITED BY SIZE
                INTO WS-WELCOME-PERSONAL
         MOVE WS-WELCOME-PERSONAL TO OUTPUT-RECORD
         WRITE OUTPUT-RECORD
         DISPLAY WS-WELCOME-PERSONAL
+        PERFORM FIND-CURRENT-USER-INDEX
         PERFORM POST-LOGIN-MENU
+    END-IF.
+FIND-CURRENT-USER-INDEX.
+    MOVE 1 TO WS-CURRENT-USER-INDEX
+    PERFORM UNTIL WS-CURRENT-USER-INDEX > WS-ACCOUNT-COUNT
+        IF FUNCTION TRIM(WS-USERNAME) = FUNCTION TRIM(WS-STORED-USERNAME(WS-CURRENT-USER-INDEX))
+            MOVE SPACES TO OUTPUT-RECORD
+            STRING "DEBUG: Found user index = " WS-CURRENT-USER-INDEX
+                   " for username = " FUNCTION TRIM(WS-USERNAME)
+                   INTO OUTPUT-RECORD
+            WRITE OUTPUT-RECORD
+            DISPLAY OUTPUT-RECORD
+            EXIT PERFORM
+        END-IF
+        ADD 1 TO WS-CURRENT-USER-INDEX
+    END-PERFORM
+    IF WS-CURRENT-USER-INDEX > WS-ACCOUNT-COUNT
+        MOVE SPACES TO OUTPUT-RECORD
+        STRING "DEBUG: User " FUNCTION TRIM(WS-USERNAME) " not found in WS-STORED-ACCOUNTS"
+               INTO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY OUTPUT-RECORD
     END-IF.
 CHECK-CREDENTIALS.
     MOVE 'N' TO WS-LOGGED-IN
@@ -349,52 +531,729 @@ CHECK-CREDENTIALS.
             MOVE 'Y' TO WS-LOGGED-IN
         END-IF
         ADD 1 TO WS-INDEX
-    END-PERFORM
-    IF WS-LOGGED-IN = 'N'
-        MOVE WS-LOGIN-FAIL TO OUTPUT-RECORD
-        WRITE OUTPUT-RECORD
-        DISPLAY WS-LOGIN-FAIL
-    END-IF.
+    END-PERFORM.
 POST-LOGIN-MENU.
     MOVE 'N' TO WS-EXIT-FLAG
-    PERFORM UNTIL WS-EOF-FLAG = 'Y' OR WS-EXIT-FLAG = 'Y'
+    PERFORM UNTIL WS-EXIT-FLAG = 'Y' OR WS-EOF-FLAG = 'Y'
         PERFORM DISPLAY-POST-LOGIN-OPTIONS
         READ INPUT-FILE INTO WS-MENU-CHOICE
             AT END
                 MOVE 'Y' TO WS-EOF-FLAG
+                EXIT PERFORM
             NOT AT END
+                MOVE FUNCTION TRIM(WS-MENU-CHOICE) TO WS-MENU-CHOICE
                 EVALUATE WS-MENU-CHOICE
                     WHEN "1"
-                        MOVE WS-UNDER-JOB TO OUTPUT-RECORD
-                        WRITE OUTPUT-RECORD
-                        DISPLAY WS-UNDER-JOB
+                        PERFORM CREATE-EDIT-PROFILE
                     WHEN "2"
-                        MOVE WS-UNDER-FIND TO OUTPUT-RECORD
-                        WRITE OUTPUT-RECORD
-                        DISPLAY WS-UNDER-FIND
+                        PERFORM VIEW-PROFILE
                     WHEN "3"
+                        MOVE WS-UNDER-SEARCH TO OUTPUT-RECORD
+                        WRITE OUTPUT-RECORD
+                        DISPLAY WS-UNDER-SEARCH
+                    WHEN "4"
                         PERFORM LEARN-SKILL-MENU
                     WHEN OTHER
                         MOVE WS-INVALID-CHOICE TO OUTPUT-RECORD
                         WRITE OUTPUT-RECORD
                         DISPLAY WS-INVALID-CHOICE
                 END-EVALUATE
-                MOVE 'N' TO WS-EOF-FLAG
-        END-READ
+            END-READ
     END-PERFORM.
 DISPLAY-POST-LOGIN-OPTIONS.
-    MOVE WS-JOB-SEARCH TO OUTPUT-RECORD
+    MOVE WS-PROFILE-CREATE TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
-    DISPLAY WS-JOB-SEARCH
-    MOVE WS-FIND-SOMEONE TO OUTPUT-RECORD
+    DISPLAY WS-PROFILE-CREATE
+    MOVE WS-PROFILE-VIEW TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
-    DISPLAY WS-FIND-SOMEONE
+    DISPLAY WS-PROFILE-VIEW
+    MOVE WS-SEARCH-USER TO OUTPUT-RECORD
+    WRITE OUTPUT-RECORD
+    DISPLAY WS-SEARCH-USER
     MOVE WS-LEARN-SKILL TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
     DISPLAY WS-LEARN-SKILL
     MOVE WS-CHOICE-PROMPT TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
     DISPLAY WS-CHOICE-PROMPT.
+CREATE-EDIT-PROFILE.
+    MOVE WS-PROFILE-HEADER TO OUTPUT-RECORD
+    WRITE OUTPUT-RECORD
+    DISPLAY WS-PROFILE-HEADER
+    MOVE 'N' TO WS-VALID-FIELD
+    PERFORM UNTIL WS-VALID-FIELD = 'Y' OR WS-EOF-FLAG = 'Y'
+        MOVE WS-FIRST-PROMPT TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY WS-FIRST-PROMPT
+        READ INPUT-FILE INTO WS-FIRST-NAME
+            AT END
+                MOVE 'Y' TO WS-EOF-FLAG
+                MOVE "Input file ended prematurely during profile creation." TO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+                EXIT PERFORM
+            NOT AT END
+                MOVE FUNCTION TRIM(WS-FIRST-NAME) TO WS-TRIMMED-FIELD
+                IF WS-TRIMMED-FIELD NOT = SPACES
+                    MOVE WS-TRIMMED-FIELD TO WS-STORED-FIRST-NAME(WS-CURRENT-USER-INDEX)
+                    MOVE 'Y' TO WS-VALID-FIELD
+                ELSE
+                    MOVE WS-REQUIRED-MSG TO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY WS-REQUIRED-MSG
+                END-IF
+        END-READ
+    END-PERFORM
+    IF WS-EOF-FLAG = 'Y' EXIT PARAGRAPH END-IF
+    MOVE 'N' TO WS-VALID-FIELD
+    PERFORM UNTIL WS-VALID-FIELD = 'Y' OR WS-EOF-FLAG = 'Y'
+        MOVE WS-LAST-PROMPT TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY WS-LAST-PROMPT
+        READ INPUT-FILE INTO WS-LAST-NAME
+            AT END
+                MOVE 'Y' TO WS-EOF-FLAG
+                MOVE "Input file ended prematurely during profile creation." TO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+                EXIT PERFORM
+            NOT AT END
+                MOVE FUNCTION TRIM(WS-LAST-NAME) TO WS-TRIMMED-FIELD
+                IF WS-TRIMMED-FIELD NOT = SPACES
+                    MOVE WS-TRIMMED-FIELD TO WS-STORED-LAST-NAME(WS-CURRENT-USER-INDEX)
+                    MOVE 'Y' TO WS-VALID-FIELD
+                ELSE
+                    MOVE WS-REQUIRED-MSG TO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY WS-REQUIRED-MSG
+                END-IF
+        END-READ
+    END-PERFORM
+    IF WS-EOF-FLAG = 'Y' EXIT PARAGRAPH END-IF
+    MOVE 'N' TO WS-VALID-FIELD
+    PERFORM UNTIL WS-VALID-FIELD = 'Y' OR WS-EOF-FLAG = 'Y'
+        MOVE WS-UNIV-PROMPT TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY WS-UNIV-PROMPT
+        READ INPUT-FILE INTO WS-UNIVERSITY
+            AT END
+                MOVE 'Y' TO WS-EOF-FLAG
+                MOVE "Input file ended prematurely during profile creation." TO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+                EXIT PERFORM
+            NOT AT END
+                MOVE FUNCTION TRIM(WS-UNIVERSITY) TO WS-TRIMMED-FIELD
+                IF WS-TRIMMED-FIELD NOT = SPACES
+                    MOVE WS-TRIMMED-FIELD TO WS-STORED-UNIVERSITY(WS-CURRENT-USER-INDEX)
+                    MOVE 'Y' TO WS-VALID-FIELD
+                ELSE
+                    MOVE WS-REQUIRED-MSG TO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY WS-REQUIRED-MSG
+                END-IF
+        END-READ
+    END-PERFORM
+    IF WS-EOF-FLAG = 'Y' EXIT PARAGRAPH END-IF
+    MOVE 'N' TO WS-VALID-FIELD
+    PERFORM UNTIL WS-VALID-FIELD = 'Y' OR WS-EOF-FLAG = 'Y'
+        MOVE WS-MAJOR-PROMPT TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY WS-MAJOR-PROMPT
+        READ INPUT-FILE INTO WS-MAJOR
+            AT END
+                MOVE 'Y' TO WS-EOF-FLAG
+                MOVE "Input file ended prematurely during profile creation." TO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+                EXIT PERFORM
+            NOT AT END
+                MOVE FUNCTION TRIM(WS-MAJOR) TO WS-TRIMMED-FIELD
+                IF WS-TRIMMED-FIELD NOT = SPACES
+                    MOVE WS-TRIMMED-FIELD TO WS-STORED-MAJOR(WS-CURRENT-USER-INDEX)
+                    MOVE 'Y' TO WS-VALID-FIELD
+                ELSE
+                    MOVE WS-REQUIRED-MSG TO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY WS-REQUIRED-MSG
+                END-IF
+        END-READ
+    END-PERFORM
+    IF WS-EOF-FLAG = 'Y' EXIT PARAGRAPH END-IF
+    MOVE 'N' TO WS-VALID-FIELD
+    MOVE 0 TO WS-RETRY-COUNT
+    PERFORM UNTIL WS-VALID-FIELD = 'Y' OR WS-EOF-FLAG = 'Y' OR WS-RETRY-COUNT >= 5
+        MOVE WS-GRAD-PROMPT TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY WS-GRAD-PROMPT
+        READ INPUT-FILE INTO WS-GRAD
+            AT END
+                MOVE 'Y' TO WS-EOF-FLAG
+                MOVE "Input file ended prematurely during profile creation." TO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+                EXIT PERFORM
+            NOT AT END
+                MOVE FUNCTION TRIM(WS-GRAD) TO WS-TRIMMED-FIELD
+                INSPECT WS-TRIMMED-FIELD REPLACING
+                    ALL X'0D' BY SPACE
+                    ALL X'0A' BY SPACE
+                    ALL X'09' BY SPACE
+                    ALL X'00' BY SPACE
+                    ALL "'" BY SPACE
+                    ALL '"' BY SPACE
+                MOVE FUNCTION TRIM(WS-TRIMMED-FIELD) TO WS-TRIMMED-FIELD
+                MOVE SPACES TO OUTPUT-RECORD
+                STRING "DEBUG: Trimmed WS-GRAD = '" DELIMITED BY SIZE
+                       WS-TRIMMED-FIELD DELIMITED BY SIZE
+                       "'" DELIMITED BY SIZE
+                       INTO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+                MOVE 0 TO WS-CHAR-COUNT
+                INSPECT FUNCTION REVERSE(WS-TRIMMED-FIELD)
+                    TALLYING WS-CHAR-COUNT FOR LEADING SPACES
+                COMPUTE WS-CHAR-COUNT =
+                    FUNCTION LENGTH(WS-TRIMMED-FIELD) - WS-CHAR-COUNT
+                MOVE SPACES TO OUTPUT-RECORD
+                STRING "DEBUG: WS-CHAR-COUNT = " DELIMITED BY SIZE
+                       WS-CHAR-COUNT DELIMITED BY SIZE
+                       INTO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+                IF WS-CHAR-COUNT = 4 AND WS-TRIMMED-FIELD(1:4) IS NUMERIC
+                    MOVE WS-TRIMMED-FIELD(1:4) TO WS-GRAD-YEAR
+                    MOVE SPACES TO OUTPUT-RECORD
+                    STRING "DEBUG: WS-GRAD-YEAR = " DELIMITED BY SIZE
+                           WS-GRAD-YEAR DELIMITED BY SIZE
+                           INTO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY OUTPUT-RECORD
+                    IF WS-GRAD-YEAR >= 1900 AND WS-GRAD-YEAR <= 2035
+                        MOVE WS-GRAD-YEAR TO WS-STORED-GRAD-YEAR(WS-CURRENT-USER-INDEX)
+                        MOVE 'Y' TO WS-VALID-FIELD
+                    ELSE
+                        MOVE WS-INVALID-YEAR TO OUTPUT-RECORD
+                        WRITE OUTPUT-RECORD
+                        DISPLAY WS-INVALID-YEAR
+                        ADD 1 TO WS-RETRY-COUNT
+                    END-IF
+                ELSE
+                    MOVE WS-INVALID-YEAR TO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY WS-INVALID-YEAR
+                    ADD 1 TO WS-RETRY-COUNT
+                END-IF
+        END-READ
+    END-PERFORM
+    IF WS-RETRY-COUNT >= 5
+        MOVE "Too many invalid attempts for graduation year. Exiting profile creation."
+            TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY OUTPUT-RECORD
+        MOVE 'Y' TO WS-EOF-FLAG
+        EXIT PARAGRAPH
+    END-IF
+    IF WS-EOF-FLAG = 'Y' EXIT PARAGRAPH END-IF
+    MOVE WS-ABOUT-PROMPT TO OUTPUT-RECORD
+    WRITE OUTPUT-RECORD
+    DISPLAY WS-ABOUT-PROMPT
+    READ INPUT-FILE INTO WS-ABOUT
+        AT END
+            MOVE 'Y' TO WS-EOF-FLAG
+            MOVE "Input file ended prematurely during profile creation." TO OUTPUT-RECORD
+            WRITE OUTPUT-RECORD
+            DISPLAY OUTPUT-RECORD
+            EXIT PARAGRAPH
+        NOT AT END
+            MOVE FUNCTION TRIM(WS-ABOUT) TO WS-STORED-ABOUT(WS-CURRENT-USER-INDEX)
+        END-READ
+    IF WS-EOF-FLAG = 'Y' EXIT PARAGRAPH END-IF
+    MOVE 0 TO WS-EXP-COUNT
+    MOVE 'N' TO WS-EXIT-FLAG
+    MOVE WS-EXP-PROMPT TO OUTPUT-RECORD
+    WRITE OUTPUT-RECORD
+    DISPLAY WS-EXP-PROMPT
+    PERFORM VARYING WS-INDEX FROM 1 BY 1 UNTIL WS-INDEX > 3 OR WS-EOF-FLAG = 'Y' OR WS-EXIT-FLAG = 'Y'
+        STRING "Experience #" FUNCTION TRIM(WS-INDEX) " - Title: " DELIMITED BY SIZE
+               INTO WS-EXP-TITLE-PROMPT
+        MOVE WS-EXP-TITLE-PROMPT TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY WS-EXP-TITLE-PROMPT
+        READ INPUT-FILE INTO WS-EXP-TITLE OF WS-INPUT-DATA
+            AT END
+                MOVE 'Y' TO WS-EOF-FLAG
+                MOVE "Input file ended prematurely during profile creation." TO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+                EXIT PERFORM
+            NOT AT END
+                MOVE FUNCTION TRIM(WS-EXP-TITLE OF WS-INPUT-DATA) TO WS-TRIMMED-FIELD
+                IF FUNCTION UPPER-CASE(WS-TRIMMED-FIELD) = "DONE"
+                    MOVE 'Y' TO WS-EXIT-FLAG
+                    EXIT PERFORM
+                END-IF
+                IF WS-TRIMMED-FIELD = SPACES
+                    MOVE WS-REQUIRED-MSG TO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY WS-REQUIRED-MSG
+                    SUBTRACT 1 FROM WS-INDEX
+                ELSE
+                    MOVE WS-TRIMMED-FIELD TO WS-EXP-TITLE OF WS-STORED-EXPERIENCE(WS-CURRENT-USER-INDEX, WS-INDEX)
+                    STRING "Experience #" FUNCTION TRIM(WS-INDEX) " - Company/Organization: "
+                           DELIMITED BY SIZE INTO WS-EXP-COMP-PROMPT
+                    MOVE WS-EXP-COMP-PROMPT TO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY WS-EXP-COMP-PROMPT
+                    READ INPUT-FILE INTO WS-EXP-COMPANY OF WS-INPUT-DATA
+                        AT END
+                            MOVE 'Y' TO WS-EOF-FLAG
+                            MOVE "Input file ended prematurely during profile creation."
+                                 TO OUTPUT-RECORD
+                            WRITE OUTPUT-RECORD
+                            DISPLAY OUTPUT-RECORD
+                            EXIT PERFORM
+                        NOT AT END
+                            MOVE FUNCTION TRIM(WS-EXP-COMPANY OF WS-INPUT-DATA) TO WS-TRIMMED-FIELD
+                            IF WS-TRIMMED-FIELD = SPACES
+                                MOVE WS-REQUIRED-MSG TO OUTPUT-RECORD
+                                WRITE OUTPUT-RECORD
+                                DISPLAY WS-REQUIRED-MSG
+                                SUBTRACT 1 FROM WS-INDEX
+                            ELSE
+                                MOVE WS-TRIMMED-FIELD TO WS-EXP-COMPANY OF WS-STORED-EXPERIENCE(WS-CURRENT-USER-INDEX, WS-INDEX)
+                            END-IF
+                    END-READ
+                    IF WS-EOF-FLAG = 'Y' OR WS-TRIMMED-FIELD = SPACES EXIT PERFORM END-IF
+                    STRING "Experience #" FUNCTION TRIM(WS-INDEX) " - Dates (e.g., Summer 2024): "
+                           DELIMITED BY SIZE INTO WS-EXP-DATES-PROMPT
+                    MOVE WS-EXP-DATES-PROMPT TO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY WS-EXP-DATES-PROMPT
+                    READ INPUT-FILE INTO WS-EXP-DATES OF WS-INPUT-DATA
+                        AT END
+                            MOVE 'Y' TO WS-EOF-FLAG
+                            MOVE "Input file ended prematurely during profile creation."
+                                 TO OUTPUT-RECORD
+                            WRITE OUTPUT-RECORD
+                            DISPLAY OUTPUT-RECORD
+                            EXIT PERFORM
+                        NOT AT END
+                            MOVE FUNCTION TRIM(WS-EXP-DATES OF WS-INPUT-DATA) TO WS-TRIMMED-FIELD
+                            IF WS-TRIMMED-FIELD = SPACES
+                                MOVE WS-REQUIRED-MSG TO OUTPUT-RECORD
+                                WRITE OUTPUT-RECORD
+                                DISPLAY WS-REQUIRED-MSG
+                                SUBTRACT 1 FROM WS-INDEX
+                            ELSE
+                                MOVE WS-TRIMMED-FIELD TO WS-EXP-DATES OF WS-STORED-EXPERIENCE(WS-CURRENT-USER-INDEX, WS-INDEX)
+                            END-IF
+                    END-READ
+                    IF WS-EOF-FLAG = 'Y' OR WS-TRIMMED-FIELD = SPACES EXIT PERFORM END-IF
+                    STRING "Experience #" FUNCTION TRIM(WS-INDEX)
+                           " - Description (optional, max 100 chars, blank to skip): "
+                           DELIMITED BY SIZE INTO WS-EXP-DESC-PROMPT
+                    MOVE WS-EXP-DESC-PROMPT TO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY WS-EXP-DESC-PROMPT
+                    READ INPUT-FILE INTO WS-EXP-DESC OF WS-INPUT-DATA
+                        AT END
+                            MOVE 'Y' TO WS-EOF-FLAG
+                            MOVE "Input file ended prematurely during profile creation."
+                                 TO OUTPUT-RECORD
+                            WRITE OUTPUT-RECORD
+                            DISPLAY OUTPUT-RECORD
+                            EXIT PERFORM
+                        NOT AT END
+                            MOVE FUNCTION TRIM(WS-EXP-DESC OF WS-INPUT-DATA)
+                                 TO WS-EXP-DESC OF WS-STORED-EXPERIENCE(WS-CURRENT-USER-INDEX, WS-INDEX)
+                        END-READ
+                    ADD 1 TO WS-EXP-COUNT
+                END-IF
+        END-READ
+    END-PERFORM
+    IF WS-EOF-FLAG = 'Y' EXIT PARAGRAPH END-IF
+    MOVE WS-EDU-PROMPT TO OUTPUT-RECORD
+    WRITE OUTPUT-RECORD
+    DISPLAY WS-EDU-PROMPT
+    MOVE 0 TO WS-EDU-COUNT
+    MOVE 'N' TO WS-EXIT-FLAG
+    PERFORM VARYING WS-INDEX FROM 1 BY 1 UNTIL WS-INDEX > 3 OR WS-EOF-FLAG = 'Y' OR WS-EXIT-FLAG = 'Y'
+        STRING "Education #" FUNCTION TRIM(WS-INDEX) " - Degree: " DELIMITED BY SIZE
+               INTO WS-EDU-DEGREE-PROMPT
+        MOVE WS-EDU-DEGREE-PROMPT TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY WS-EDU-DEGREE-PROMPT
+        READ INPUT-FILE INTO WS-EDU-DEGREE OF WS-INPUT-DATA
+            AT END
+                MOVE 'Y' TO WS-EOF-FLAG
+                MOVE "Input file ended prematurely during profile creation." TO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+                EXIT PERFORM
+            NOT AT END
+                MOVE FUNCTION TRIM(WS-EDU-DEGREE OF WS-INPUT-DATA) TO WS-TRIMMED-FIELD
+                IF FUNCTION UPPER-CASE(WS-TRIMMED-FIELD) = "DONE"
+                    MOVE 'Y' TO WS-EXIT-FLAG
+                    EXIT PERFORM
+                END-IF
+                IF WS-TRIMMED-FIELD = SPACES
+                    MOVE WS-REQUIRED-MSG TO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY WS-REQUIRED-MSG
+                    SUBTRACT 1 FROM WS-INDEX
+                ELSE
+                    MOVE WS-TRIMMED-FIELD TO WS-EDU-DEGREE OF WS-STORED-EDUCATION(WS-CURRENT-USER-INDEX, WS-INDEX)
+                    STRING "Education #" FUNCTION TRIM(WS-INDEX) " - University/College: "
+                           DELIMITED BY SIZE INTO WS-EDU-UNIV-PROMPT
+                    MOVE WS-EDU-UNIV-PROMPT TO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY WS-EDU-UNIV-PROMPT
+                    READ INPUT-FILE INTO WS-EDU-UNIVERSITY OF WS-INPUT-DATA
+                        AT END
+                            MOVE 'Y' TO WS-EOF-FLAG
+                            MOVE "Input file ended prematurely during profile creation."
+                                 TO OUTPUT-RECORD
+                            WRITE OUTPUT-RECORD
+                            DISPLAY OUTPUT-RECORD
+                            EXIT PERFORM
+                        NOT AT END
+                            MOVE FUNCTION TRIM(WS-EDU-UNIVERSITY OF WS-INPUT-DATA) TO WS-TRIMMED-FIELD
+                            IF WS-TRIMMED-FIELD = SPACES
+                                MOVE WS-REQUIRED-MSG TO OUTPUT-RECORD
+                                WRITE OUTPUT-RECORD
+                                DISPLAY WS-REQUIRED-MSG
+                                SUBTRACT 1 FROM WS-INDEX
+                            ELSE
+                                MOVE WS-TRIMMED-FIELD TO WS-EDU-UNIVERSITY OF WS-STORED-EDUCATION(WS-CURRENT-USER-INDEX, WS-INDEX)
+                            END-IF
+                    END-READ
+                    IF WS-EOF-FLAG = 'Y' OR WS-TRIMMED-FIELD = SPACES EXIT PERFORM END-IF
+                    STRING "Education #" FUNCTION TRIM(WS-INDEX)
+                           " - Years Attended" DELIMITED BY SIZE
+                           INTO WS-EDU-YEARS-PROMPT
+                    MOVE WS-EDU-YEARS-PROMPT TO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY WS-EDU-YEARS-PROMPT
+                    MOVE 'N' TO WS-VALID-FIELD
+                    MOVE 0 TO WS-RETRY-COUNT
+                    PERFORM UNTIL WS-VALID-FIELD = 'Y' OR WS-EOF-FLAG = 'Y' OR WS-RETRY-COUNT >= 5
+                        MOVE WS-EDU-START-YEAR-PROMPT TO OUTPUT-RECORD
+                        WRITE OUTPUT-RECORD
+                        DISPLAY WS-EDU-START-YEAR-PROMPT
+                        READ INPUT-FILE INTO WS-GRAD
+                            AT END
+                                MOVE 'Y' TO WS-EOF-FLAG
+                                MOVE "Input file ended prematurely during profile creation."
+                                     TO OUTPUT-RECORD
+                                WRITE OUTPUT-RECORD
+                                DISPLAY OUTPUT-RECORD
+                                EXIT PERFORM
+                            NOT AT END
+                                MOVE FUNCTION TRIM(WS-GRAD) TO WS-TRIMMED-FIELD
+                                INSPECT WS-TRIMMED-FIELD REPLACING
+                                    ALL X'0D' BY SPACE
+                                    ALL X'0A' BY SPACE
+                                    ALL X'09' BY SPACE
+                                    ALL X'00' BY SPACE
+                                    ALL "'" BY SPACE
+                                    ALL '"' BY SPACE
+                                MOVE FUNCTION TRIM(WS-TRIMMED-FIELD) TO WS-TRIMMED-FIELD
+                                MOVE SPACES TO OUTPUT-RECORD
+                                STRING "DEBUG: Trimmed Start Year = '" DELIMITED BY SIZE
+                                       WS-TRIMMED-FIELD DELIMITED BY SIZE
+                                       "'" DELIMITED BY SIZE
+                                       INTO OUTPUT-RECORD
+                                WRITE OUTPUT-RECORD
+                                DISPLAY OUTPUT-RECORD
+                                MOVE 0 TO WS-CHAR-COUNT
+                                INSPECT FUNCTION REVERSE(WS-TRIMMED-FIELD)
+                                    TALLYING WS-CHAR-COUNT FOR LEADING SPACES
+                                COMPUTE WS-CHAR-COUNT =
+                                    FUNCTION LENGTH(WS-TRIMMED-FIELD) - WS-CHAR-COUNT
+                                MOVE SPACES TO OUTPUT-RECORD
+                                STRING "DEBUG: WS-CHAR-COUNT = " DELIMITED BY SIZE
+                                       WS-CHAR-COUNT DELIMITED BY SIZE
+                                       INTO OUTPUT-RECORD
+                                WRITE OUTPUT-RECORD
+                                DISPLAY OUTPUT-RECORD
+                                IF FUNCTION UPPER-CASE(WS-TRIMMED-FIELD) = "DONE"
+                                    MOVE 'Y' TO WS-EXIT-FLAG
+                                    EXIT PERFORM
+                                END-IF
+                                IF WS-CHAR-COUNT = 4 AND WS-TRIMMED-FIELD(1:4) IS NUMERIC
+                                    MOVE WS-TRIMMED-FIELD(1:4) TO WS-START-YEAR
+                                    MOVE SPACES TO OUTPUT-RECORD
+                                    STRING "DEBUG: WS-START-YEAR = " DELIMITED BY SIZE
+                                           WS-START-YEAR DELIMITED BY SIZE
+                                           INTO OUTPUT-RECORD
+                                    WRITE OUTPUT-RECORD
+                                    DISPLAY OUTPUT-RECORD
+                                    IF WS-START-YEAR >= 1900 AND WS-START-YEAR <= 2035
+                                        MOVE WS-EDU-END-YEAR-PROMPT TO OUTPUT-RECORD
+                                        WRITE OUTPUT-RECORD
+                                        DISPLAY WS-EDU-END-YEAR-PROMPT
+                                        READ INPUT-FILE INTO WS-GRAD
+                                            AT END
+                                                MOVE 'Y' TO WS-EOF-FLAG
+                                                MOVE "Input file ended prematurely during profile creation."
+                                                     TO OUTPUT-RECORD
+                                                WRITE OUTPUT-RECORD
+                                                DISPLAY OUTPUT-RECORD
+                                                EXIT PERFORM
+                                            NOT AT END
+                                                MOVE FUNCTION TRIM(WS-GRAD) TO WS-TRIMMED-FIELD
+                                                INSPECT WS-TRIMMED-FIELD REPLACING
+                                                    ALL X'0D' BY SPACE
+                                                    ALL X'0A' BY SPACE
+                                                    ALL X'09' BY SPACE
+                                                    ALL X'00' BY SPACE
+                                                    ALL "'" BY SPACE
+                                                    ALL '"' BY SPACE
+                                                MOVE FUNCTION TRIM(WS-TRIMMED-FIELD) TO WS-TRIMMED-FIELD
+                                                MOVE SPACES TO OUTPUT-RECORD
+                                                STRING "DEBUG: Trimmed End Year = '" DELIMITED BY SIZE
+                                                       WS-TRIMMED-FIELD DELIMITED BY SIZE
+                                                       "'" DELIMITED BY SIZE
+                                                       INTO OUTPUT-RECORD
+                                                WRITE OUTPUT-RECORD
+                                                DISPLAY OUTPUT-RECORD
+                                                MOVE 0 TO WS-CHAR-COUNT
+                                                INSPECT FUNCTION REVERSE(WS-TRIMMED-FIELD)
+                                                    TALLYING WS-CHAR-COUNT FOR LEADING SPACES
+                                                COMPUTE WS-CHAR-COUNT =
+                                                    FUNCTION LENGTH(WS-TRIMMED-FIELD) - WS-CHAR-COUNT
+                                                MOVE SPACES TO OUTPUT-RECORD
+                                                STRING "DEBUG: WS-CHAR-COUNT = " DELIMITED BY SIZE
+                                                       WS-CHAR-COUNT DELIMITED BY SIZE
+                                                       INTO OUTPUT-RECORD
+                                                WRITE OUTPUT-RECORD
+                                                DISPLAY OUTPUT-RECORD
+                                                IF FUNCTION UPPER-CASE(WS-TRIMMED-FIELD) = "DONE"
+                                                    MOVE 'Y' TO WS-EXIT-FLAG
+                                                    EXIT PERFORM
+                                                END-IF
+                                                IF WS-CHAR-COUNT = 4 AND WS-TRIMMED-FIELD(1:4) IS NUMERIC
+                                                    MOVE WS-TRIMMED-FIELD(1:4) TO WS-END-YEAR
+                                                    MOVE SPACES TO OUTPUT-RECORD
+                                                    STRING "DEBUG: WS-END-YEAR = " DELIMITED BY SIZE
+                                                           WS-END-YEAR DELIMITED BY SIZE
+                                                           INTO OUTPUT-RECORD
+                                                    WRITE OUTPUT-RECORD
+                                                    DISPLAY OUTPUT-RECORD
+                                                    IF WS-END-YEAR >= 1900 AND WS-END-YEAR <= 2035 AND
+                                                       WS-START-YEAR <= WS-END-YEAR
+                                                        STRING WS-START-YEAR DELIMITED BY SIZE
+                                                               "-" DELIMITED BY SIZE
+                                                               WS-END-YEAR DELIMITED BY SIZE
+                                                               INTO WS-EDU-YEARS OF WS-STORED-EDUCATION(WS-CURRENT-USER-INDEX, WS-INDEX)
+                                                        MOVE 'Y' TO WS-VALID-FIELD
+                                                        ADD 1 TO WS-EDU-COUNT
+                                                    ELSE
+                                                        MOVE WS-INVALID-YEARS TO OUTPUT-RECORD
+                                                        WRITE OUTPUT-RECORD
+                                                        DISPLAY WS-INVALID-YEARS
+                                                        ADD 1 TO WS-RETRY-COUNT
+                                                    END-IF
+                                                ELSE
+                                                    MOVE WS-INVALID-YEAR TO OUTPUT-RECORD
+                                                    WRITE OUTPUT-RECORD
+                                                    DISPLAY WS-INVALID-YEAR
+                                                    ADD 1 TO WS-RETRY-COUNT
+                                                END-IF
+                                        END-READ
+                                    ELSE
+                                        MOVE WS-INVALID-YEAR TO OUTPUT-RECORD
+                                        WRITE OUTPUT-RECORD
+                                        DISPLAY WS-INVALID-YEAR
+                                        ADD 1 TO WS-RETRY-COUNT
+                                    END-IF
+                                ELSE
+                                    MOVE WS-INVALID-YEAR TO OUTPUT-RECORD
+                                    WRITE OUTPUT-RECORD
+                                    DISPLAY WS-INVALID-YEAR
+                                    ADD 1 TO WS-RETRY-COUNT
+                                END-IF
+                        END-READ
+                        IF WS-EOF-FLAG = 'Y' OR WS-EXIT-FLAG = 'Y' EXIT PERFORM END-IF
+                    END-PERFORM
+                    IF WS-RETRY-COUNT >= 5
+                        MOVE "Too many invalid attempts for education years. Exiting profile creation."
+                            TO OUTPUT-RECORD
+                        WRITE OUTPUT-RECORD
+                        DISPLAY OUTPUT-RECORD
+                        MOVE 'Y' TO WS-EOF-FLAG
+                        EXIT PERFORM
+                    END-IF
+                    IF WS-EOF-FLAG = 'Y' OR WS-EXIT-FLAG = 'Y' EXIT PERFORM END-IF
+                END-IF
+        END-READ
+        IF WS-EXIT-FLAG = 'Y' OR WS-EOF-FLAG = 'Y' EXIT PERFORM END-IF
+        MOVE WS-EDU-PROMPT TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY WS-EDU-PROMPT
+    END-PERFORM
+    IF WS-EOF-FLAG = 'Y' EXIT PARAGRAPH END-IF
+    IF WS-EOF-FLAG NOT = 'Y'
+        MOVE 'Y' TO WS-STORED-HAS-PROFILE(WS-CURRENT-USER-INDEX)
+        PERFORM SAVE-ALL-PROFILES
+        MOVE WS-PROFILE-SAVED TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY WS-PROFILE-SAVED
+    END-IF.
+SAVE-ALL-PROFILES.
+    OPEN OUTPUT PROFILES-FILE
+    PERFORM VARYING WS-INDEX FROM 1 BY 1 UNTIL WS-INDEX > WS-ACCOUNT-COUNT
+        IF WS-STORED-HAS-PROFILE(WS-INDEX) = 'Y'
+            MOVE WS-STORED-USERNAME(WS-INDEX) TO PROFILE-USERNAME
+            MOVE WS-STORED-FIRST-NAME(WS-INDEX) TO PROFILE-FIRST-NAME
+            MOVE WS-STORED-LAST-NAME(WS-INDEX) TO PROFILE-LAST-NAME
+            MOVE WS-STORED-UNIVERSITY(WS-INDEX) TO PROFILE-UNIVERSITY
+            MOVE WS-STORED-MAJOR(WS-INDEX) TO PROFILE-MAJOR
+            MOVE WS-STORED-GRAD-YEAR(WS-INDEX) TO PROFILE-GRAD-YEAR
+            MOVE WS-STORED-ABOUT(WS-INDEX) TO PROFILE-ABOUT
+            PERFORM VARYING WS-INDEX2 FROM 1 BY 1 UNTIL WS-INDEX2 > 3
+                MOVE WS-EXP-TITLE OF WS-STORED-EXPERIENCE(WS-INDEX, WS-INDEX2)
+                    TO EXP-TITLE OF PROFILE-EXPERIENCE(WS-INDEX2)
+                MOVE WS-EXP-COMPANY OF WS-STORED-EXPERIENCE(WS-INDEX, WS-INDEX2)
+                    TO EXP-COMPANY OF PROFILE-EXPERIENCE(WS-INDEX2)
+                MOVE WS-EXP-DATES OF WS-STORED-EXPERIENCE(WS-INDEX, WS-INDEX2)
+                    TO EXP-DATES OF PROFILE-EXPERIENCE(WS-INDEX2)
+                MOVE WS-EXP-DESC OF WS-STORED-EXPERIENCE(WS-INDEX, WS-INDEX2)
+                    TO EXP-DESC OF PROFILE-EXPERIENCE(WS-INDEX2)
+                MOVE WS-EDU-DEGREE OF WS-STORED-EDUCATION(WS-INDEX, WS-INDEX2)
+                    TO EDU-DEGREE OF PROFILE-EDUCATION(WS-INDEX2)
+                MOVE WS-EDU-UNIVERSITY OF WS-STORED-EDUCATION(WS-INDEX, WS-INDEX2)
+                    TO EDU-UNIVERSITY OF PROFILE-EDUCATION(WS-INDEX2)
+                MOVE WS-EDU-YEARS OF WS-STORED-EDUCATION(WS-INDEX, WS-INDEX2)
+                    TO EDU-YEARS OF PROFILE-EDUCATION(WS-INDEX2)
+            END-PERFORM
+            WRITE PROFILE-RECORD
+            END-WRITE
+            MOVE SPACES TO OUTPUT-RECORD
+            STRING "DEBUG: Wrote profile for username = "
+                   FUNCTION TRIM(WS-STORED-USERNAME(WS-INDEX))
+                   INTO OUTPUT-RECORD
+            WRITE OUTPUT-RECORD
+            DISPLAY OUTPUT-RECORD
+        END-IF
+    END-PERFORM
+    CLOSE PROFILES-FILE.
+VIEW-PROFILE.
+    IF WS-STORED-HAS-PROFILE(WS-CURRENT-USER-INDEX) = 'N'
+        MOVE WS-NO-PROFILE TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY WS-NO-PROFILE
+    ELSE
+        MOVE SPACES TO OUTPUT-RECORD
+        STRING "DEBUG: Displaying profile for index = " WS-CURRENT-USER-INDEX
+               INTO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY OUTPUT-RECORD
+        MOVE WS-VIEW-HEADER TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY WS-VIEW-HEADER
+        MOVE SPACES TO OUTPUT-RECORD
+        STRING "DEBUG: First Name = " FUNCTION TRIM(WS-STORED-FIRST-NAME(WS-CURRENT-USER-INDEX))
+               INTO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY OUTPUT-RECORD
+        STRING WS-NAME-LABEL DELIMITED BY SIZE
+               FUNCTION TRIM(WS-STORED-FIRST-NAME(WS-CURRENT-USER-INDEX)) DELIMITED BY SIZE
+               " " DELIMITED BY SIZE
+               FUNCTION TRIM(WS-STORED-LAST-NAME(WS-CURRENT-USER-INDEX)) DELIMITED BY SIZE
+               INTO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY OUTPUT-RECORD
+        STRING WS-UNIV-LABEL DELIMITED BY SIZE
+               FUNCTION TRIM(WS-STORED-UNIVERSITY(WS-CURRENT-USER-INDEX)) DELIMITED BY SIZE
+               INTO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY OUTPUT-RECORD
+        STRING WS-MAJOR-LABEL DELIMITED BY SIZE
+               FUNCTION TRIM(WS-STORED-MAJOR(WS-CURRENT-USER-INDEX)) DELIMITED BY SIZE
+               INTO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY OUTPUT-RECORD
+        STRING WS-GRAD-LABEL DELIMITED BY SIZE
+               WS-STORED-GRAD-YEAR(WS-CURRENT-USER-INDEX) DELIMITED BY SIZE
+               INTO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY OUTPUT-RECORD
+        IF FUNCTION TRIM(WS-STORED-ABOUT(WS-CURRENT-USER-INDEX)) NOT = SPACES
+            STRING WS-ABOUT-LABEL DELIMITED BY SIZE
+                   FUNCTION TRIM(WS-STORED-ABOUT(WS-CURRENT-USER-INDEX)) DELIMITED BY SIZE
+                   INTO OUTPUT-RECORD
+            WRITE OUTPUT-RECORD
+            DISPLAY OUTPUT-RECORD
+        END-IF
+        MOVE WS-EXP-LABEL TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY WS-EXP-LABEL
+        PERFORM VARYING WS-INDEX FROM 1 BY 1 UNTIL WS-INDEX > 3
+            IF FUNCTION TRIM(WS-EXP-TITLE OF WS-STORED-EXPERIENCE(WS-CURRENT-USER-INDEX, WS-INDEX)) NOT = SPACES
+                MOVE SPACES TO OUTPUT-RECORD
+                STRING "DEBUG: Experience " WS-INDEX " Title = "
+                       FUNCTION TRIM(WS-EXP-TITLE OF WS-STORED-EXPERIENCE(WS-CURRENT-USER-INDEX, WS-INDEX))
+                       INTO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+                STRING WS-TITLE-LABEL DELIMITED BY SIZE
+                       FUNCTION TRIM(WS-EXP-TITLE OF WS-STORED-EXPERIENCE(WS-CURRENT-USER-INDEX, WS-INDEX)) DELIMITED BY SIZE
+                       INTO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+                STRING WS-COMP-LABEL DELIMITED BY SIZE
+                       FUNCTION TRIM(WS-EXP-COMPANY OF WS-STORED-EXPERIENCE(WS-CURRENT-USER-INDEX, WS-INDEX)) DELIMITED BY SIZE
+                       INTO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+                STRING WS-DATES-LABEL DELIMITED BY SIZE
+                       FUNCTION TRIM(WS-EXP-DATES OF WS-STORED-EXPERIENCE(WS-CURRENT-USER-INDEX, WS-INDEX)) DELIMITED BY SIZE
+                       INTO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+                IF FUNCTION TRIM(WS-EXP-DESC OF WS-STORED-EXPERIENCE(WS-CURRENT-USER-INDEX, WS-INDEX)) NOT = SPACES
+                    STRING WS-DESC-LABEL DELIMITED BY SIZE
+                           FUNCTION TRIM(WS-EXP-DESC OF WS-STORED-EXPERIENCE(WS-CURRENT-USER-INDEX, WS-INDEX)) DELIMITED BY SIZE
+                           INTO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY OUTPUT-RECORD
+                END-IF
+            END-IF
+        END-PERFORM
+        MOVE WS-EDU-LABEL TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY WS-EDU-LABEL
+        PERFORM VARYING WS-INDEX FROM 1 BY 1 UNTIL WS-INDEX > 3
+            IF FUNCTION TRIM(WS-EDU-DEGREE OF WS-STORED-EDUCATION(WS-CURRENT-USER-INDEX, WS-INDEX)) NOT = SPACES
+                MOVE SPACES TO OUTPUT-RECORD
+                STRING "DEBUG: Education " WS-INDEX " Degree = "
+                       FUNCTION TRIM(WS-EDU-DEGREE OF WS-STORED-EDUCATION(WS-CURRENT-USER-INDEX, WS-INDEX))
+                       INTO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+                STRING WS-DEGREE-LABEL DELIMITED BY SIZE
+                       FUNCTION TRIM(WS-EDU-DEGREE OF WS-STORED-EDUCATION(WS-CURRENT-USER-INDEX, WS-INDEX)) DELIMITED BY SIZE
+                       INTO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+                STRING WS-EDU-UNIV-LABEL DELIMITED BY SIZE
+                       FUNCTION TRIM(WS-EDU-UNIVERSITY OF WS-STORED-EDUCATION(WS-CURRENT-USER-INDEX, WS-INDEX)) DELIMITED BY SIZE
+                       INTO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+                STRING WS-YEARS-LABEL DELIMITED BY SIZE
+                       FUNCTION TRIM(WS-EDU-YEARS OF WS-STORED-EDUCATION(WS-CURRENT-USER-INDEX, WS-INDEX)) DELIMITED BY SIZE
+                       INTO OUTPUT-RECORD
+                WRITE OUTPUT-RECORD
+                DISPLAY OUTPUT-RECORD
+            END-IF
+        END-PERFORM
+        MOVE WS-SEPARATOR TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY WS-SEPARATOR
+    END-IF.
 LEARN-SKILL-MENU.
     MOVE 'N' TO WS-EXIT-FLAG
     PERFORM UNTIL WS-EXIT-FLAG = 'Y' OR WS-EOF-FLAG = 'Y'
@@ -402,7 +1261,9 @@ LEARN-SKILL-MENU.
         READ INPUT-FILE INTO WS-SKILL-CHOICE
             AT END
                 MOVE 'Y' TO WS-EOF-FLAG
+                EXIT PERFORM
             NOT AT END
+                MOVE FUNCTION TRIM(WS-SKILL-CHOICE) TO WS-SKILL-CHOICE
                 EVALUATE WS-SKILL-CHOICE
                     WHEN "1"
                         MOVE WS-UNDER-SKILL TO OUTPUT-RECORD
@@ -431,8 +1292,7 @@ LEARN-SKILL-MENU.
                         WRITE OUTPUT-RECORD
                         DISPLAY WS-INVALID-CHOICE
                 END-EVALUATE
-                MOVE 'N' TO WS-EOF-FLAG
-        END-READ
+            END-READ
     END-PERFORM.
 DISPLAY-SKILLS.
     MOVE WS-SKILL-TITLE TO OUTPUT-RECORD
