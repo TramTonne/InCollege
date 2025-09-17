@@ -1,32 +1,30 @@
 2
-alice123
-Password#9
+johnsmith
+Password123!
 1
-alice123
-Password#9
+johnsmith
+Password123!
 1
-Alice
-Smith
-Tech University
-Information Technology
+John
+Doe
+Example University
+Computer Science
 2025
-Aspiring IT professional interested in cybersecurity and networking.
-Intern
-NetSecure Inc
-Summer 2024
-Worked on security audits and vulnerability testing.
+Passionate learner exploring technology
+Software Intern
+Tech Corp
+Summer 2023
+Built automation tools for testing
 DONE
-BSc in Information Technology
+Bachelor of Science
+Example University
+2021-2025
+Master of Science
 Tech University
-2021
-2025
+2025-2027
+Associate of Arts
+Community College
+2019-2021
 DONE
-1
-alice123
-Password#9
 2
-2
-4
-1
 6
-3

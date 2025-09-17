@@ -1,153 +1,108 @@
-DEBUG: Read profile for username = alice123
-DEBUG: Loaded profile for alice123 at index 02
 Welcome to InCollege!
 1. Log In
 2. Create New Account
-3. Exit
 Enter your choice:
 Please enter username:
 Username already exists!
 Welcome to InCollege!
 1. Log In
 2. Create New Account
-3. Exit
 Enter your choice:
 Invalid choice
 Welcome to InCollege!
 1. Log In
 2. Create New Account
-3. Exit
 Enter your choice:
 Please enter username:
 Please enter password:
-You have successfully logged in.
-Welcome,alice123!
-DEBUG: Found user index = 02 for username = alice123
+You have successfully logged in
+Welcome, johnsmith!
 1. Create/Edit My Profile
 2. View My Profile
-3. Search for User
-4. Learn a New Skill
-5. Log Out
+3. Search for a job
+4. Find someone that you know
+5. Learn a new skill
+6. Log Out
 Enter your choice:
---- Create/Edit Profile ---
+Create/Edit Profile
 Enter First Name:
 Enter Last Name:
 Enter University/College Attended:
 Enter Major:
 Enter Graduation Year (YYYY):
-DEBUG: Trimmed WS-GRAD = '2025
-DEBUG: WS-CHAR-COUNT = 04
-DEBUG: WS-GRAD-YEAR = 2025
-Enter About Me (optional, max 200 chars, enter blank line to skip):
+Enter About Me (optional, max 200 chars, enter blank line to
 Add Experience (optional, max 3 entries. Enter 'DONE' to finish):
-Experience #01 - Title:
-Experience #01 - Company/Organization:
-Experience #01 - Dates (e.g., Summer 2024):
-Experience #01 - Description (optional, max 100 chars, blank to skip):
-Experience #02 - Title:
+Experience #1 - Title:
+Software Intern
+Experience #1 - Company/Organization:
+Tech Corp
+Experience #1 - Dates (e.g., Summer 2024):
+Summer 2023
+Experience #1 - Description (optional, max 100 chars, blank to skip):
+Built automation tools for testing
+Add Experience (optional, max 3 entries. Enter 'DONE' to finish):
 Add Education (optional, max 3 entries. Enter 'DONE' to finish):
-Education #01 - Degree:
-Education #01 - University/College:
-Education #01 - Years Attended
-Enter Start Year (YYYY, e.g., 2019):
-DEBUG: Trimmed Start Year = '2021
-DEBUG: WS-CHAR-COUNT = 04
-DEBUG: WS-START-YEAR = 2021
-Enter End Year (YYYY, e.g., 2023):
-DEBUG: Trimmed End Year = '2025
-DEBUG: WS-CHAR-COUNT = 04
-DEBUG: WS-END-YEAR = 2025
+Education #1 - Degree:
+Bachelor of Science
+Education #1 - University/College:
+Example University
+Education #1 - Years Attended (e.g., 2023-2025):
+2021-2025
 Add Education (optional, max 3 entries. Enter 'DONE' to finish):
-Education #02 - Degree:
-DEBUG: Wrote profile for username = alice123
-Profile saved successfully!
-Welcome to InCollege!
-1. Log In
-2. Create New Account
-3. Exit
-Enter your choice:
-Please enter username:
-Please enter password:
-You have successfully logged in.
-Welcome,alice123!
-DEBUG: Found user index = 02 for username = alice123
+Education #2 - Degree:
+Master of Science
+Education #2 - University/College:
+Tech University
+Education #2 - Years Attended (e.g., 2023-2025):
+2025-2027
+Add Education (optional, max 3 entries. Enter 'DONE' to finish):
+Education #3 - Degree:
+Associate of Arts
+Education #3 - University/College:
+Community College
+Education #3 - Years Attended (e.g., 2023-2025):
+2019-2021
+Profile saved successfull
 1. Create/Edit My Profile
 2. View My Profile
-3. Search for User
-4. Learn a New Skill
-5. Log Out
+3. Search for a job
+4. Find someone that you know
+5. Learn a new skill
+6. Log Out
 Enter your choice:
-DEBUG: Displaying profile for index = 02
---- Your Profile ---
-DEBUG: First Name = Alice
-Name:Alice Smith
-University:Tech University
-Major:Information Technology
-Graduation Year:2025
-About Me:Aspiring IT professional interested in cybersecurity and networking.
+Invalid choice
+1. Create/Edit My Profile
+2. View My Profile
+3. Search for a job
+4. Find someone that you know
+5. Learn a new skill
+6. Log Out
+Enter your choice:
+Your Profile
+Name:   John Doe
+University: Example University
+Major: Computer Science
+Graduation Year: 2025
+About Me: Passionate learner exploring technology
 Experience:
-DEBUG: Experience 01 Title = Intern
-Title:Intern
-Company:NetSecure Inc
-Dates:Summer 2024
-Description:Worked on security audits and vulnerability testing.
+ Title:  Software Intern
+ Company:  Tech Corp
+ Dates:  Summer 2023
+ Description:  Built automation tools for testing
 Education:
-DEBUG: Education 01 Degree = BSc in Information Technology
-Degree:BSc in Information Technology
-University:Tech University
-Years:2021-2025
---------------------
+ Degree:  Bachelor of Science
+ University:  Example University
+ Years:  2021-2025
+ Degree:  Master of Science
+ University:  Tech University
+ Years:  2025-2027
+ Degree:  Associate of Arts
+ University:  Community College
+ Years:  2019-2021
 1. Create/Edit My Profile
 2. View My Profile
-3. Search for User
-4. Learn a New Skill
-5. Log Out
-Enter your choice:
-DEBUG: Displaying profile for index = 02
---- Your Profile ---
-DEBUG: First Name = Alice
-Name:Alice Smith
-University:Tech University
-Major:Information Technology
-Graduation Year:2025
-About Me:Aspiring IT professional interested in cybersecurity and networking.
-Experience:
-DEBUG: Experience 01 Title = Intern
-Title:Intern
-Company:NetSecure Inc
-Dates:Summer 2024
-Description:Worked on security audits and vulnerability testing.
-Education:
-DEBUG: Education 01 Degree = BSc in Information Technology
-Degree:BSc in Information Technology
-University:Tech University
-Years:2021-2025
---------------------
-1. Create/Edit My Profile
-2. View My Profile
-3. Search for User
-4. Learn a New Skill
-5. Log Out
-Enter your choice:
-Learn a New Skill:
-Skill 1
-Skill 2
-Skill 3
-Skill 4
-Skill 5
-Go Back
-Enter your choice:
-This skill is under construction.
-Learn a New Skill:
-Skill 1
-Skill 2
-Skill 3
-Skill 4
-Skill 5
-Go Back
-Enter your choice:
-Welcome to InCollege!
-1. Log In
-2. Create New Account
-3. Exit
+3. Search for a job
+4. Find someone that you know
+5. Learn a new skill
+6. Log Out
 Enter your choice:
