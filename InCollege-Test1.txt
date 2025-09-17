@@ -1,0 +1,26 @@
+1
+johnsmith
+Password123!
+1
+John
+Doe
+University of Miami
+Computer Science
+2025
+Passionate about software development and AI technologies.
+Software Intern
+Tech Corp
+Summer 2023
+Built automation tools for testing.
+DONE
+Bachelor of Science
+University of Miami
+2021-2025
+DONE
+2
+johnsmith
+Password123!
+3
+4
+5
+6
