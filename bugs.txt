@@ -1,22 +1,31 @@
-Title: 6th account limit message is split accross two lines
-Area: Create Account -> The 5 Account Maximum
+Title: Experience and Education not displayed when searching for a user profile
+Area: Profile Search
 
 Instructions to reproduce bug is:
-- Create 5 valid accounts
-- From the main menu, enter 2 (Create New Account) one more time.
-- The expected message should be all in one single line:
-    "All permitted accounts have been created, please come back later"
+- Start with an empty accounts.dat and profiles.dat.
+- Create a new user (e.g., johnsmith / MyPass!23).
+- Log in as johnsmith and create a profile with About, Experience, and Education.
+- Log out.
+- Log in with a different user (e.g., janedoe / HerPass!45).
+- From the main menu, enter 4 (Find someone that you know).
+- Search for "John Smith".
 
-- The actual message is printed on two different lines:
-    "All permitted accounts have been created,
-    please come back later"
+- The expected result: The full profile for John Smith should be displayed, including Experience and Education entries.
+- The actual result: Only the basic profile fields (Name, University, Major, Graduation Year, About) are shown. Experience and Education are missing.
 
-Title: Login to an existing account fails across separate runs
-Steps to reproduce:
-	1.	Start with an empty accounts.dat.
-	2.	Create a user (e.g., user1 / TeamVA5!).
-	3.	Stop the program. (Just clear out InCollege-Input.txt)
-	4.	Start the program again and try to log in with that username/password.
-Expected: You have successfully logged in
-Actual: Incorrect username/password, please try again.
-Notes: Login works only when account creation and login are in the same run. Across runs, even though accounts.dat contains the user, login fails. Likely due to how the password hash length (WS-CHAR-COUNT) is set in the COBOL code. But could be another reason.
+Notes: This bug only occurs when searching for a person in a separate run. Viewing one’s own profile displays all fields correctly.
+
+---
+
+Title: Search is case-sensitive instead of case-insensitive
+Area: Profile Search
+
+Instructions to reproduce bug is:
+- Create a user profile with the name "Jane Doe".
+- Log in with a different user (e.g., johnsmith / MyPass!23).
+- From the main menu, enter 4 (Find someone that you know).
+- Search for "Jane Doe" → profile is found.
+- Search for "jane doe" or "JANE DOE".
+
+- The expected result: The profile for Jane Doe should display regardless of letter casing.
+- The actual result: "No one by that name could be found" unless the exact capitalization is entered.
