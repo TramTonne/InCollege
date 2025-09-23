@@ -1,32 +1,23 @@
 2
-alice123
-Password#9
+johnsmith
+MyPass!23
 1
-alice123
-Password#9
+johnsmith
+MyPass!23
 1
-Alice
+John
 Smith
-Tech University
-Information Technology
+University of Miami
+Computer Science
 2025
-Aspiring IT professional interested in cybersecurity and networking.
-Intern
-NetSecure Inc
-Summer 2024
-Worked on security audits and vulnerability testing.
+About John Smith
+Software Engineer
+Company A
+2023-2024
+Worked on backend systems
 DONE
-BSc in Information Technology
-Tech University
-2021
-2025
+B.S. Computer Science
+University of Miami
+2021-2025
 DONE
-1
-alice123
-Password#9
-2
-2
-4
-1
 6
-3
