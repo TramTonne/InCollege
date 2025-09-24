@@ -1,23 +1,6 @@
-2
-johnsmith
-MyPass!23
 1
-johnsmith
-MyPass!23
-1
-John
-Smith
-University of Miami
-Computer Science
-2025
-About John Smith
-Software Engineer
-Company A
-2023-2024
-Worked on backend systems
-DONE
-B.S. Computer Science
-University of Miami
-2021-2025
-DONE
+janedoe
+HerPass!45
+4
+Bob Jones
 6

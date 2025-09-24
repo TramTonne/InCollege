@@ -5,7 +5,7 @@ Enter your choice:
 Please enter username:
 Please enter password:
 You have successfully logged in
-Welcome, johnsmith!
+Welcome, janedoe!
 1. Create/Edit My Profile
 2. View My Profile
 3. Search for a job
@@ -15,54 +15,6 @@ Welcome, johnsmith!
 Enter your choice:
 Enter the full name of the person you are searching for (e.g., John Doe):
 No one by that name could be found.
-1. Create/Edit My Profile
-2. View My Profile
-3. Search for a job
-4. Find someone that you know
-5. Learn a new skill
-6. Log Out
-Enter your choice:
-Enter the full name of the person you are searching for (e.g., John Doe):
-------------------------------
---- Found User Profile ---
-Name:   John Smith
-University: University of Miami
-Major: Computer Science
-Graduation Year: 2025
-About Me: About John Smith
-Experience:
- Title:
- Company:
- Dates:
-Education:
- Degree:
- University:
- Years:
--------------------------
-1. Create/Edit My Profile
-2. View My Profile
-3. Search for a job
-4. Find someone that you know
-5. Learn a new skill
-6. Log Out
-Enter your choice:
-------------------------------
-Your Profile
-Name:   John Smith
-University: University of Miami
-Major: Computer Science
-Graduation Year: 2025
-About Me: About John Smith
-Experience:
- Title:  Software Engineer
- Company:  Company A
- Dates:  2023-2024
- Description:  Worked on backend systems
-Education:
- Degree:  B.S. Computer Science
- University:  University of Miami
- Years:  2021-2025
--------------------------
 1. Create/Edit My Profile
 2. View My Profile
 3. Search for a job

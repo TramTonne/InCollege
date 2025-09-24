@@ -1,18 +1,91 @@
+Log in as johnsmith, create/edit a profile, log out, log back in, view profile.
+
 2
-short
-pass
-2
-longusername123
-LongP@ssword!1
-2
-gloria
-Password12
-2
-validuser
-AValid!23P
+johnsmith
+MyPass!23
 1
-gloria
-MyP@ssword!1
+johnsmith
+MyPass!23
 1
-fakeuser
-wrongpass
+John
+Smith
+University of Miami
+Cybersecurity
+2026
+About John
+Software Engineer
+Company X
+2023-2024
+Worked on backend systems
+DONE
+B.S. Cybersecurity
+University of Miami
+2022-2026
+DONE
+6
+1
+johnsmith
+MyPass!23
+2
+6
+
+
+
+Update Profile
+
+1
+johnsmith
+MyPass!23
+1
+John
+Smith
+University of Miami
+Information Technology
+2027
+Updated About Text
+DONE
+DONE
+6
+1
+johnsmith
+MyPass!23
+2
+6
+
+
+
+Step 3: Cross-user search
+2
+janedoe
+HerPass!45
+1
+janedoe
+HerPass!45
+4
+John Smith
+6
+
+
+
+Bug 2
+
+1
+janedoe
+HerPass!45
+4
+john smith
+4
+JOHN SMITH
+4
+JoHn SmItH
+6
+
+
+Negative Case
+
+1
+janedoe
+HerPass!45
+4
+Bob Jones
+6
