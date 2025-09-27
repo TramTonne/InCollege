@@ -5,68 +5,29 @@ Enter your choice:
 Please enter username:
 Please enter password:
 You have successfully logged in
-Welcome, johnsmith!
-1. Create/Edit My Profile
-2. View My Profile
-3. Search for a job
-4. Find someone that you know
-5. Learn a new skill
-6. Log Out
+Welcome, TestUser4!
+1. View My Profile
+2. Search for User
+3. Learn a new skill
+4. View My Pending Connection Requests
 Enter your choice:
-Enter the full name of the person you are searching for (e.g., John Doe):
-No one by that name could be found.
-1. Create/Edit My Profile
-2. View My Profile
-3. Search for a job
-4. Find someone that you know
-5. Learn a new skill
-6. Log Out
-Enter your choice:
-Enter the full name of the person you are searching for (e.g., John Doe):
+Enter the full name of the person you are looking for:
 ------------------------------
 --- Found User Profile ---
-Name:   John Smith
+Name:   John Doe
 University: University of Miami
 Major: Computer Science
 Graduation Year: 2025
-About Me: About John Smith
-Experience:
- Title:
- Company:
- Dates:
-Education:
- Degree:
- University:
- Years:
+About Me: DONE
+Experience: None
+Education: None
 -------------------------
-1. Create/Edit My Profile
-2. View My Profile
-3. Search for a job
-4. Find someone that you know
-5. Learn a new skill
-6. Log Out
+1. Send Connection Request
+2. Back to Main Menu
 Enter your choice:
-------------------------------
-Your Profile
-Name:   John Smith
-University: University of Miami
-Major: Computer Science
-Graduation Year: 2025
-About Me: About John Smith
-Experience:
- Title:  Software Engineer
- Company:  Company A
- Dates:  2023-2024
- Description:  Worked on backend systems
-Education:
- Degree:  B.S. Computer Science
- University:  University of Miami
- Years:  2021-2025
--------------------------
-1. Create/Edit My Profile
-2. View My Profile
-3. Search for a job
-4. Find someone that you know
-5. Learn a new skill
-6. Log Out
+Invalid choice
+1. View My Profile
+2. Search for User
+3. Learn a new skill
+4. View My Pending Connection Requests
 Enter your choice:
