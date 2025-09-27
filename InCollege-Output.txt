@@ -5,27 +5,15 @@ Enter your choice:
 Please enter username:
 Please enter password:
 You have successfully logged in
-Welcome, TestUser4!
+Welcome, TestUser!
 1. View My Profile
 2. Search for User
 3. Learn a new skill
 4. View My Pending Connection Requests
 Enter your choice:
-Enter the full name of the person you are looking for:
-------------------------------
---- Found User Profile ---
-Name:   John Doe
-University: University of Miami
-Major: Computer Science
-Graduation Year: 2025
-About Me: DONE
-Experience: None
-Education: None
--------------------------
-1. Send Connection Request
-2. Back to Main Menu
-Enter your choice:
-Invalid choice
+--- Pending Connection Requests ---
+From: TestUser4
+-----------------------------------
 1. View My Profile
 2. Search for User
 3. Learn a new skill
