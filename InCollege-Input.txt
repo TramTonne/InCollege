@@ -1,4 +1,16 @@
+2
+NewStudent
+Pass!word1
 1
-TestUser
-Test1233!
+NewStudent
+Pass!word1
+1
+New
+Student
+West Coast Uni
+Business
+2027
+Motivated student.
+DONE
+DONE
 4

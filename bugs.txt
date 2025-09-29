@@ -1,31 +1,21 @@
-Title: Experience and Education not displayed when searching for a user profile
-Area: Profile Search
+Title: Invalid menu choices appear immediately after creating a profile
+Area: Profile Creation / Post-Login Menu
 
-Instructions to reproduce bug is:
-- Start with an empty accounts.dat and profiles.dat.
-- Create a new user (e.g., johnsmith / MyPass!23).
-- Log in as johnsmith and create a profile with About, Experience, and Education.
-- Log out.
-- Log in with a different user (e.g., janedoe / HerPass!45).
-- From the main menu, enter 4 (Find someone that you know).
-- Search for "John Smith".
+Instructions to reproduce bug:
+	•	Start with empty accounts.dat and profiles.dat.
+	•	Create a new user (e.g., newstudent / Pass!word1).
+	•	Log in as newstudent.
+	•	Complete profile creation (enter First Name, Last Name, University, Major, Graduation Year, About, and DONE for Experience and Education).
 
-- The expected result: The full profile for John Smith should be displayed, including Experience and Education entries.
-- The actual result: Only the basic profile fields (Name, University, Major, Graduation Year, About) are shown. Experience and Education are missing.
+Expected result:
+	•	After profile creation, the program should immediately return to the post-login menu.
+	•	The user should only see the 4 valid menu options and be able to make a clean selection.
 
-Notes: This bug only occurs when searching for a person in a separate run. Viewing one’s own profile displays all fields correctly.
+Actual result:
+	•	The program displays “Invalid choice” one or more times before showing the post-login menu.
+	•	This happens because leftover input (e.g., DONE or a blank line) is being misread as a menu choice.
 
----
-
-Title: Search is case-sensitive instead of case-insensitive
-Area: Profile Search
-
-Instructions to reproduce bug is:
-- Create a user profile with the name "Jane Doe".
-- Log in with a different user (e.g., johnsmith / MyPass!23).
-- From the main menu, enter 4 (Find someone that you know).
-- Search for "Jane Doe" → profile is found.
-- Search for "jane doe" or "JANE DOE".
-
-- The expected result: The profile for Jane Doe should display regardless of letter casing.
-- The actual result: "No one by that name could be found" unless the exact capitalization is entered.
+Notes:
+	•	Bug only occurs right after creating a profile.
+	•	Once at the post-login menu, all options work normally.
+	•	Root cause is that CREATE-EDIT-PROFILE doesn’t reset the input state, so stale input is consumed by the menu loop.
