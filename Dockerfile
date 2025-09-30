@@ -10,6 +10,11 @@ COPY InCollege.cob .
 RUN cobc -x -free -o /usr/local/bin/InCollege InCollege.cob
 
 WORKDIR /data
+COPY InCollege-Input.txt .
+COPY accounts.dat .
+COPY profiles.dat .
+COPY connections.dat .
+COPY Roles.txt .
 ENV COB_FILE_PATH="/data:."
 
 # (These env vars are optional helpers; COBOL uses literal filenames and COB_FILE_PATH)

@@ -4,50 +4,36 @@ Welcome to InCollege!
 Enter your choice:
 Please enter username:
 Please enter password:
-Account successfully created!
-Welcome to InCollege!
-1. Log In
-2. Create New Account
-Enter your choice:
-Please enter username:
-Please enter password:
 You have successfully logged in.
-Welcome, NewStudent!
-1. View My Profile
-2. Search for User
-3. Learn a New Skill
-4. View My Pending Connection Requests
+Welcome, NewStudent3!
+1. Create/Edit Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
 Enter your choice:
-Create/Edit Profile
-Enter First Name:
-Enter Last Name:
-Enter University/College Attended:
-Enter Major:
-Enter Graduation Year (YYYY):
-Enter About Me (optional, max 200 chars, enter blank line to skip):
-Profile saved successfully!
-1. View My Profile
-2. Search for User
-3. Learn a New Skill
-4. View My Pending Connection Requests
-Enter your choice:
-Invalid choice
-1. View My Profile
-2. Search for User
-3. Learn a New Skill
-4. View My Pending Connection Requests
-Enter your choice:
-Invalid choice
-1. View My Profile
-2. Search for User
-3. Learn a New Skill
-4. View My Pending Connection Requests
+------------------------------
+Your Profile
+Name:   New Student3
+University: West Coast Uni
+Major: Business
+Graduation Year: 2027
+About Me: Motivated student.
+Experience: None
+Education: None
+-------------------------
+1. Create/Edit Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
 Enter your choice:
 --- Pending Connection Requests ---
-You have no pending connection requests at this time.
+From: New Student2
 -----------------------------------
-1. View My Profile
-2. Search for User
-3. Learn a New Skill
-4. View My Pending Connection Requests
+1. Create/Edit Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
 Enter your choice:

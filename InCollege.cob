@@ -225,6 +225,12 @@ WORKING-STORAGE SECTION.
    05 WS-NO-CONNECTIONS-MSG PIC X(30) VALUE "You have no connections yet.".
    05 WS-CONN-USERNAME-PROMPT PIC X(40) VALUE "Enter username to connect with: ".
    05 WS-CONN-MESSAGE-PROMPT PIC X(60) VALUE "Enter message (optional, max 200 chars, blank to skip): ".
+01 WS-NAME-LOOKUP-VARS.
+   05 WS-LOOKUP-USERNAME PIC X(20).
+   05 WS-LOOKUP-FIRST-NAME PIC X(50).
+   05 WS-LOOKUP-LAST-NAME PIC X(50).
+   05 WS-LOOKUP-FULL-NAME PIC X(101).
+   05 WS-USER-FOUND PIC X VALUE 'N'.
 01 WS-STORED-ACCOUNTS.
    05 WS-ACCOUNT OCCURS 5 TIMES.
       10 WS-STORED-USERNAME PIC X(20).
@@ -556,17 +562,21 @@ POST-LOGIN-MENU.
             NOT AT END
                 EVALUATE WS-MENU-CHOICE
                     WHEN "1"
+                        PERFORM CREATE-EDIT-PROFILE
+                    WHEN "2"
                         PERFORM LOAD-PROFILE
                         IF WS-PROFILE-FOUND = 'Y'
                             PERFORM VIEW-PROFILE
                         ELSE
-                            PERFORM CREATE-EDIT-PROFILE
+                            MOVE "No profile found. Please create a profile first." TO OUTPUT-RECORD
+                            WRITE OUTPUT-RECORD
+                            DISPLAY "No profile found. Please create a profile first."
                         END-IF
-                    WHEN "2"
-                        PERFORM SEARCH-FOR-USER-WITH-CONNECT
                     WHEN "3"
-                        PERFORM LEARN-SKILL-MENU
+                        PERFORM SEARCH-FOR-USER-WITH-CONNECT
                     WHEN "4"
+                        PERFORM LEARN-SKILL-MENU
+                    WHEN "5"
                         PERFORM VIEW-MY-PENDING-REQUESTS
                     WHEN OTHER
                         MOVE WS-INVALID-CHOICE TO OUTPUT-RECORD
@@ -577,18 +587,21 @@ POST-LOGIN-MENU.
         END-READ
     END-PERFORM.
 DISPLAY-POST-LOGIN-OPTIONS.
-    MOVE "1. View My Profile" TO OUTPUT-RECORD
+    MOVE "1. Create/Edit Profile" TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
-    DISPLAY "1. View My Profile"
-    MOVE "2. Search for User" TO OUTPUT-RECORD
+    DISPLAY "1. Create/Edit Profile"
+    MOVE "2. View My Profile" TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
-    DISPLAY "2. Search for User"
-    MOVE "3. Learn a New Skill" TO OUTPUT-RECORD
+    DISPLAY "2. View My Profile"
+    MOVE "3. Search for User" TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
-    DISPLAY "3. Learn a New Skill"
-    MOVE "4. View My Pending Connection Requests" TO OUTPUT-RECORD
+    DISPLAY "3. Search for User"
+    MOVE "4. Learn a New Skill" TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
-    DISPLAY "4. View My Pending Connection Requests"
+    DISPLAY "4. Learn a New Skill"
+    MOVE "5. View My Pending Connection Requests" TO OUTPUT-RECORD
+    WRITE OUTPUT-RECORD
+    DISPLAY "5. View My Pending Connection Requests"
     MOVE WS-CHOICE-PROMPT TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
     DISPLAY WS-CHOICE-PROMPT.
@@ -1156,6 +1169,47 @@ SEARCH-FOR-USER.
         DISPLAY "No one by that name could be found."
     END-IF.
 
+LOOKUP-USER-NAME.
+    *> Initialize variables
+    MOVE 'N' TO WS-USER-FOUND
+    MOVE SPACES TO WS-LOOKUP-FIRST-NAME
+    MOVE SPACES TO WS-LOOKUP-LAST-NAME
+    MOVE SPACES TO WS-LOOKUP-FULL-NAME
+    
+    *> Open profiles file
+    OPEN INPUT PROFILES-FILE
+    IF PROFILES-STATUS = "35"
+        CLOSE PROFILES-FILE
+        MOVE WS-LOOKUP-USERNAME TO WS-LOOKUP-FULL-NAME
+        EXIT PARAGRAPH
+    END-IF
+    
+    *> Search for user profile
+    MOVE 'N' TO WS-EOF-FLAG
+    PERFORM UNTIL WS-EOF-FLAG = 'Y' OR WS-USER-FOUND = 'Y'
+        READ PROFILES-FILE
+            AT END
+                MOVE 'Y' TO WS-EOF-FLAG
+            NOT AT END
+                IF FUNCTION TRIM(PROFILE-USERNAME) = FUNCTION TRIM(WS-LOOKUP-USERNAME)
+                    MOVE 'Y' TO WS-USER-FOUND
+                    MOVE PROFILE-FIRST-NAME TO WS-LOOKUP-FIRST-NAME
+                    MOVE PROFILE-LAST-NAME TO WS-LOOKUP-LAST-NAME
+                END-IF
+        END-READ
+    END-PERFORM
+    
+    CLOSE PROFILES-FILE
+    
+    *> Build full name or use username if not found
+    IF WS-USER-FOUND = 'Y'
+        STRING FUNCTION TRIM(WS-LOOKUP-FIRST-NAME) " " 
+               FUNCTION TRIM(WS-LOOKUP-LAST-NAME)
+               DELIMITED BY SIZE INTO WS-LOOKUP-FULL-NAME
+    ELSE
+        MOVE WS-LOOKUP-USERNAME TO WS-LOOKUP-FULL-NAME
+    END-IF.
+
 VIEW-MY-PENDING-REQUESTS.
     MOVE "--- Pending Connection Requests ---" TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
@@ -1183,11 +1237,14 @@ VIEW-MY-PENDING-REQUESTS.
                 IF FUNCTION TRIM(CONN-RECIPIENT-USERNAME) = FUNCTION TRIM(WS-USERNAME) AND
                    FUNCTION TRIM(CONN-STATUS) = "PENDING"
                     MOVE 'Y' TO WS-CONNECTION-FOUND
+                    *> Lookup sender's full name
+                    MOVE CONN-SENDER-USERNAME TO WS-LOOKUP-USERNAME
+                    PERFORM LOOKUP-USER-NAME
                     MOVE SPACES TO OUTPUT-RECORD
-                    STRING "From: " FUNCTION TRIM(CONN-SENDER-USERNAME)
+                    STRING "From: " FUNCTION TRIM(WS-LOOKUP-FULL-NAME)
                         DELIMITED BY SIZE INTO OUTPUT-RECORD
                     WRITE OUTPUT-RECORD
-                    DISPLAY "From: " FUNCTION TRIM(CONN-SENDER-USERNAME)
+                    DISPLAY "From: " FUNCTION TRIM(WS-LOOKUP-FULL-NAME)
                     IF FUNCTION TRIM(CONN-MESSAGE) NOT = SPACES
                         MOVE SPACES TO OUTPUT-RECORD
                         STRING "Message: " FUNCTION TRIM(CONN-MESSAGE)
@@ -1555,11 +1612,14 @@ VIEW-PENDING-REQUESTS.
                 IF FUNCTION TRIM(CONN-RECIPIENT-USERNAME) = FUNCTION TRIM(WS-USERNAME) AND
                    FUNCTION TRIM(CONN-STATUS) = "PENDING"
                     MOVE 'Y' TO WS-CONNECTION-FOUND
+                    *> Lookup sender's full name
+                    MOVE CONN-SENDER-USERNAME TO WS-LOOKUP-USERNAME
+                    PERFORM LOOKUP-USER-NAME
                     MOVE SPACES TO OUTPUT-RECORD
-                    STRING "From: " FUNCTION TRIM(CONN-SENDER-USERNAME)
+                    STRING "From: " FUNCTION TRIM(WS-LOOKUP-FULL-NAME)
                         DELIMITED BY SIZE INTO OUTPUT-RECORD
                     WRITE OUTPUT-RECORD
-                    DISPLAY "From: " FUNCTION TRIM(CONN-SENDER-USERNAME)
+                    DISPLAY "From: " FUNCTION TRIM(WS-LOOKUP-FULL-NAME)
                     IF FUNCTION TRIM(CONN-MESSAGE) NOT = SPACES
                         MOVE SPACES TO OUTPUT-RECORD
                         STRING "Message: " FUNCTION TRIM(CONN-MESSAGE)

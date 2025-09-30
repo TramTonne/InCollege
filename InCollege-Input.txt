@@ -1,16 +1,9 @@
+1
+NewStudent3
+Pass!word1
 2
-NewStudent
-Pass!word1
-1
-NewStudent
-Pass!word1
-1
-New
-Student
-West Coast Uni
-Business
-2027
-Motivated student.
-DONE
-DONE
-4
+3
+someuser
+2
+3
+8
