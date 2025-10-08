@@ -4,30 +4,30 @@ Welcome to InCollege!
 Enter your choice:
 Please enter username:
 Please enter password:
-You have successfully logged in
-Welcome, TestUser4!
-1. View My Profile
-2. Search for User
-3. Learn a new skill
-4. View My Pending Connection Requests
+You have successfully logged in.
+Welcome, Bob!
+1. Create/Edit Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
 Enter your choice:
-Enter the full name of the person you are looking for:
-------------------------------
---- Found User Profile ---
-Name:   John Doe
-University: University of Miami
-Major: Computer Science
-Graduation Year: 2025
-About Me: DONE
-Experience: None
-Education: None
--------------------------
-1. Send Connection Request
-2. Back to Main Menu
+--- Your Network ---
+Connected with: Alice (University: Unknown, Major: Unknown)
+--------------------
+1. Create/Edit Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
 Enter your choice:
 Invalid choice
-1. View My Profile
-2. Search for User
-3. Learn a new skill
-4. View My Pending Connection Requests
+1. Create/Edit Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
 Enter your choice:
