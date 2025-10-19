@@ -34,10 +34,6 @@ DONE
 3
 8
 John Doe
-1
-5
-1
-6
 7
 1
 Software Engineer Intern
