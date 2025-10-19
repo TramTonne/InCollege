@@ -16,6 +16,28 @@ Computer Science
 I am a computer science student passionate about software development.
 DONE
 DONE
+2
+8
+1
+User2
+Pass123!
+1
+Jane
+Smith
+Florida State University
+Data Science
+2025
+I love working with data and creating insights.
+DONE
+DONE
+2
+3
+8
+John Doe
+1
+5
+1
+6
 7
 1
 Software Engineer Intern
@@ -31,6 +53,4 @@ Analytics Corp
 New York, NY
 $60,000/year
 3
-3
-John Doe
-1
+8
