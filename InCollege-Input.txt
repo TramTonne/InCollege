@@ -1,13 +1,20 @@
 2
-User1
+User7
 Pass123!
 1
-User1
+User7
 Pass123!
 7
 1
-Data Analyst
-Analyze data trends and create reports for business insights.
-DataCorp LLC
-New York
-None
+Software Intern
+Develop tools for internal testing and automation.
+TechCorp
+New York, NY
+$25/hour
+2
+1
+1
+0
+3
+4
+8
