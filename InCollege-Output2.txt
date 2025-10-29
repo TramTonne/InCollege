@@ -43,6 +43,9 @@ Enter your choice:
 000006. Quality Assurance Engineer at Amazon (New York, NY)
 000007. Quality Assurance Engineer at Amazon (New York, NY)
 000008. Quality Assurance Engineer at Amazon (New York, NY)
+000009. Quality Assurance Engineer at Amazon (New York, NY)
+000010. Quality Assurance Engineer at Amazon (New York, NY)
+000011. Quality Assurance Engineer at Amazon (New York, NY)
 -----------------------------
 Enter job number to view details, or 0 to go back:
 --- Job Details ---
@@ -65,6 +68,9 @@ Your application for Data Analyst at DataCorp LLC has been submitted.
 000006. Quality Assurance Engineer at Amazon (New York, NY)
 000007. Quality Assurance Engineer at Amazon (New York, NY)
 000008. Quality Assurance Engineer at Amazon (New York, NY)
+000009. Quality Assurance Engineer at Amazon (New York, NY)
+000010. Quality Assurance Engineer at Amazon (New York, NY)
+000011. Quality Assurance Engineer at Amazon (New York, NY)
 -----------------------------
 Enter job number to view details, or 0 to go back:
 --- Job Search/Internship Menu
@@ -92,8 +98,20 @@ Job Title: Data Analyst
 Employer: DataCorp LLC
 Location: New York
 ---
+Job Title: Data Analyst
+Employer: DataCorp LLC
+Location: New York
+---
+Job Title: Data Analyst
+Employer: DataCorp LLC
+Location: New York
+---
+Job Title: Data Analyst
+Employer: DataCorp LLC
+Location: New York
+---
 ------------------------------
-Total Applications: 000004
+Total Applications: 000007
 ------------------------------
 --- Job Search/Internship Menu
 1. Post a Job/Internship
