@@ -1,0 +1,39 @@
+Welcome to InCollege!         
+1. Log In              
+2. Create New Account       
+Enter your choice:  
+Please enter username:   
+Please enter password:   
+You have successfully logged in.
+Welcome, JoseMartinez!                            
+1. Create/Edit Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
+7. Search for a job
+8. Messages
+Enter your choice:  
+--- Messages ---
+1. Send a New Message
+2. View My Messages
+3. Back to Main Menu
+Enter your choice:  
+Enter recipient's username: 
+Enter your message (max 200 characters): 
+Message sent successfully!
+--- Messages ---
+1. Send a New Message
+2. View My Messages
+3. Back to Main Menu
+Enter your choice:  
+1. Create/Edit Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
+7. Search for a job
+8. Messages
+Enter your choice:  
