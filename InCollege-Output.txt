@@ -4,15 +4,8 @@ Welcome to InCollege!
 Enter your choice:
 Please enter username:
 Please enter password:
-Account successfully created!
-Welcome to InCollege!
-1. Log In
-2. Create New Account
-Enter your choice:
-Please enter username:
-Please enter password:
 You have successfully logged in.
-Welcome, User7!
+Welcome, JoseMartinez!
 1. Create/Edit Profile
 2. View My Profile
 3. Search for User
@@ -20,22 +13,18 @@ Welcome, User7!
 5. View My Pending Connection Requests
 6. View My Network
 7. Search for a job
-8. Log Out
+8. Messages
 Enter your choice:
---- Job Search/Internship Menu
-1. Post a Job/Internship
-2. Browse Jobs/Internships
-3. View My Applications
-4. Back to Main Menu
+--- Messages ---
+1. Send a New Message
+2. View My Messages
+3. Back to Main Menu
 Enter your choice:
---- Available Job Listings ---
------------------------------
-Enter job number to view details, or 0 to go back:
---- Job Search/Internship Menu
-1. Post a Job/Internship
-2. Browse Jobs/Internships
-3. View My Applications
-4. Back to Main Menu
+View My Messages is under construction.
+--- Messages ---
+1. Send a New Message
+2. View My Messages
+3. Back to Main Menu
 Enter your choice:
 1. Create/Edit Profile
 2. View My Profile
@@ -44,5 +33,5 @@ Enter your choice:
 5. View My Pending Connection Requests
 6. View My Network
 7. Search for a job
-8. Log Out
+8. Messages
 Enter your choice:

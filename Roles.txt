@@ -1,4 +1,4 @@
-Epic #2 - User Profile
+Epic #7 - User Profile
 
 Scrum Master: Torres, Michael
 Coder #1: Tapadia, Venktesh
