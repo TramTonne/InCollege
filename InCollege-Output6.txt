@@ -15,13 +15,14 @@ Welcome, JoseMartinez!
 7. Search for a job
 8. Messages
 Enter your choice:
---- Messages Menu ---
+--- Messages ---
 1. Send a New Message
 2. View My Messages
 3. Back to Main Menu
 Enter your choice:
-View My Messages is under construction.
---- Messages Menu ---
+Enter recipient's username:
+You can only send messages to users you are connected with!
+--- Messages ---
 1. Send a New Message
 2. View My Messages
 3. Back to Main Menu
@@ -35,3 +36,14 @@ Enter your choice:
 7. Search for a job
 8. Messages
 Enter your choice:
+1. Create/Edit Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
+7. Search for a job
+8. Messages
+Enter your choice:
+Create/Edit Profile
+Enter First Name:

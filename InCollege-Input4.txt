@@ -1,0 +1,7 @@
+1
+JoseMartinez     
+Pass456! 
+8
+1
+MichaelTorres
+Hi Michael, I wanted to ask if you would be willing to join our team for the upcoming hackathon “Hackabull.” It’s hosted by USF, and our team is looking for one more person to join us. We are thinking about building a web scraping model using Python and BeautifulSoup to collect and analyze data from different websites. I thought you would be a good fit since you already have some experience working with automation tools.

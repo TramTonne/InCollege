@@ -1,0 +1,73 @@
+Welcome to InCollege!
+1. Log In
+2. Create New Account
+Enter your choice:
+Please enter username:
+Please enter password:
+You have successfully logged in.
+Welcome, JoseMartinez!
+1. Create/Edit Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
+7. Search for a job
+8. Messages
+Enter your choice:
+Enter the full name of the person you are looking for:
+------------------------------
+--- Found User Profile ---
+Name:   Devante Johnson
+University: University of South Florida
+Major: Information Technology
+Graduation Year: 2026
+About Me: Learning cybersecurity and AI
+Experience: None
+Education: None
+-------------------------
+1. Send Connection Request
+2. Back to Main Menu
+Enter your choice:
+You already have a pending connection request with this user!
+1. Create/Edit Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
+7. Search for a job
+8. Messages
+Enter your choice:
+--- Messages ---
+1. Send a New Message
+2. View My Messages
+3. Back to Main Menu
+Enter your choice:
+Enter recipient's username:
+You can only send messages to users you are connected with!
+--- Messages ---
+1. Send a New Message
+2. View My Messages
+3. Back to Main Menu
+Enter your choice:
+1. Create/Edit Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
+7. Search for a job
+8. Messages
+Enter your choice:
+1. Create/Edit Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
+7. Search for a job
+8. Messages
+Enter your choice:
+Create/Edit Profile
+Enter First Name:
