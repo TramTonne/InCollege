@@ -37,7 +37,7 @@ FILE-CONTROL.
 DATA DIVISION.
 FILE SECTION.
 FD INPUT-FILE.
-01 INPUT-RECORD PIC X(80).
+01 INPUT-RECORD PIC X(500).
 FD OUTPUT-FILE.
 01 OUTPUT-RECORD PIC X(80).
 FD ACCOUNTS-FILE.
@@ -134,6 +134,9 @@ FD MESSAGES-FILE.
    05 MSG-CONTENT PIC X(200).
    05 MSG-TIMESTAMP PIC X(19).
 WORKING-STORAGE SECTION.
+01  WS-LONG-MSG   PIC X(500).
+01  WS-LEN        PIC 9(3).
+01  WS-DISPLAY-MSG PIC X(80).
 01 WS-FLAGS.
    05 WS-EOF-FLAG PIC X VALUE 'N'.
       88 WS-END-OF-FILE VALUE 'Y'.
@@ -2176,9 +2179,9 @@ MESSAGES-MENU.
     GO TO POST-LOGIN-MENU.
 
 DISPLAY-MESSAGES-OPTIONS.
-    MOVE "--- Messages ---" TO OUTPUT-RECORD
+    MOVE "--- Messages Menu ---" TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
-    DISPLAY "--- Messages ---"
+    DISPLAY "--- Messages Menu ---"
     MOVE "1. Send a New Message" TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
     DISPLAY "1. Send a New Message"
@@ -2193,9 +2196,9 @@ DISPLAY-MESSAGES-OPTIONS.
     DISPLAY WS-CHOICE-PROMPT.
 
 SEND-MESSAGE-PROCESS.
-    MOVE "Enter recipient's username: " TO OUTPUT-RECORD
+    MOVE "Enter recipient's username (must be a connection):" TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
-    DISPLAY "Enter recipient's username: "
+    DISPLAY "Enter recipient's username (must be a connection):"
     READ INPUT-FILE INTO WS-MSG-RECIPIENT
         AT END
             MOVE 'Y' TO WS-EOF-FLAG
@@ -2222,20 +2225,40 @@ SEND-MESSAGE-PROCESS.
     END-IF
 
     *> Get message content
-    MOVE "Enter your message (max 200 characters): " TO OUTPUT-RECORD
+    MOVE "Enter your message (max 200 chars):" TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
-    DISPLAY "Enter your message (max 200 characters): "
-    READ INPUT-FILE INTO WS-MSG-CONTENT
+    DISPLAY "Enter your message (max 200 chars):"
+    READ INPUT-FILE INTO WS-LONG-MSG
         AT END
             MOVE 'Y' TO WS-EOF-FLAG
             EXIT PARAGRAPH
     END-READ
 
+    *> Check actual length of trimmed message
+    COMPUTE WS-LEN = FUNCTION LENGTH(FUNCTION TRIM(WS-LONG-MSG))
+
+    IF WS-LEN > 200
+        MOVE "Error: Message exceeds 200 characters. Please shorten your message." TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY "Error: Message exceeds 200 characters. Please shorten your message."
+        GO TO MESSAGES-MENU
+    END-IF
+
+    MOVE WS-LONG-MSG TO WS-MSG-CONTENT
+
+
     *> Save the message
     PERFORM SAVE-MESSAGE
-    MOVE "Message sent successfully!" TO OUTPUT-RECORD
+    STRING "Message sent to "
+            FUNCTION TRIM(WS-MSG-RECIPIENT)
+            " successfully!"
+            DELIMITED BY SIZE
+            INTO WS-DISPLAY-MSG
+    END-STRING
+    MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
-    DISPLAY "Message sent successfully!".
+    DISPLAY WS-DISPLAY-MSG.
+
 
 VIEW-MESSAGES-PROCESS.
     MOVE "View My Messages is under construction." TO OUTPUT-RECORD
