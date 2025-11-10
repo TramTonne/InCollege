@@ -2261,9 +2261,73 @@ SEND-MESSAGE-PROCESS.
 
 
 VIEW-MESSAGES-PROCESS.
-    MOVE "View My Messages is under construction." TO OUTPUT-RECORD
+    MOVE "--- Your Messages ---" TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
-    DISPLAY "View My Messages is under construction.".
+    DISPLAY "--- Your Messages ---"
+    
+    MOVE 'N' TO WS-CONNECTION-FOUND
+    OPEN INPUT MESSAGES-FILE
+    IF MESSAGES-STATUS = "35"
+        CLOSE MESSAGES-FILE
+        MOVE "You have no messages at this time." TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY "You have no messages at this time."
+        MOVE "------------------------" TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY "------------------------"
+        EXIT PARAGRAPH
+    END-IF
+
+    MOVE 'N' TO WS-EOF-FLAG
+    PERFORM UNTIL WS-EOF-FLAG = 'Y'
+        READ MESSAGES-FILE
+            AT END
+                MOVE 'Y' TO WS-EOF-FLAG
+            NOT AT END
+                IF FUNCTION TRIM(MSG-RECIPIENT-USERNAME) = FUNCTION TRIM(WS-USERNAME)
+                    MOVE 'Y' TO WS-CONNECTION-FOUND
+                    
+                    *> Lookup sender's full name for display
+                    MOVE MSG-SENDER-USERNAME TO WS-LOOKUP-USERNAME
+                    PERFORM LOOKUP-USER-NAME
+                    
+                    MOVE SPACES TO OUTPUT-RECORD
+                    STRING "From: " FUNCTION TRIM(WS-LOOKUP-FULL-NAME)
+                        DELIMITED BY SIZE INTO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY "From: " FUNCTION TRIM(WS-LOOKUP-FULL-NAME)
+                    
+                    MOVE SPACES TO OUTPUT-RECORD
+                    STRING "Message: " FUNCTION TRIM(MSG-CONTENT)
+                        DELIMITED BY SIZE INTO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY "Message: " FUNCTION TRIM(MSG-CONTENT)
+                    
+                    IF FUNCTION TRIM(MSG-TIMESTAMP) NOT = SPACES
+                        MOVE SPACES TO OUTPUT-RECORD
+                        STRING "(Optional) Sent: " FUNCTION TRIM(MSG-TIMESTAMP)
+                            DELIMITED BY SIZE INTO OUTPUT-RECORD
+                        WRITE OUTPUT-RECORD
+                        DISPLAY "(Optional) Sent: " FUNCTION TRIM(MSG-TIMESTAMP)
+                    END-IF
+                    
+                    MOVE "---" TO OUTPUT-RECORD
+                    WRITE OUTPUT-RECORD
+                    DISPLAY "---"
+                END-IF
+        END-READ
+    END-PERFORM
+    CLOSE MESSAGES-FILE
+
+    IF WS-CONNECTION-FOUND = 'N'
+        MOVE "You have no messages at this time." TO OUTPUT-RECORD
+        WRITE OUTPUT-RECORD
+        DISPLAY "You have no messages at this time."
+    END-IF
+
+    MOVE "------------------------" TO OUTPUT-RECORD
+    WRITE OUTPUT-RECORD
+    DISPLAY "------------------------".
 
 CHECK-USER-EXISTS.
     MOVE 'N' TO WS-ACCOUNT-EXISTS
