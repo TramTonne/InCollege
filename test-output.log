@@ -1,11 +1,11 @@
-Welcome to InCollege!
-1. Log In
-2. Create New Account
-Enter your choice:
-Please enter username:
-Please enter password:
+Welcome to InCollege!         
+1. Log In              
+2. Create New Account       
+Enter your choice:  
+Please enter username:   
+Please enter password:   
 You have successfully logged in.
-Welcome, JoseMartinez!
+Welcome, JoseMartinez!                            
 1. Create/Edit Profile
 2. View My Profile
 3. Search for User
@@ -14,19 +14,19 @@ Welcome, JoseMartinez!
 6. View My Network
 7. Search for a job
 8. Messages
-Enter your choice:
+Enter your choice:  
 --- Messages Menu ---
 1. Send a New Message
 2. View My Messages
 3. Back to Main Menu
-Enter your choice:
+Enter your choice:  
 --- Your Messages ---
 From: Devante Johnson
-Message: Hi Jose! Hope your Epic 9 implementation is working well. Greetings fro
+Message: Hi Jose! Hope your Epic 9 implementation is working well. Greetings from Devante!
 (Sent: 2025-11-09 15:00)
 ---
 From: ThisIsTestUsr
-Message: Hey Jose! Just wanted to test the messaging system. This message is fro
+Message: Hey Jose! Just wanted to test the messaging system. This message is from Michael Torres.
 (Sent: 2025-11-09 15:01)
 ---
 ------------------------
@@ -34,7 +34,7 @@ Message: Hey Jose! Just wanted to test the messaging system. This message is fro
 1. Send a New Message
 2. View My Messages
 3. Back to Main Menu
-Enter your choice:
+Enter your choice:  
 1. Create/Edit Profile
 2. View My Profile
 3. Search for User
@@ -43,7 +43,7 @@ Enter your choice:
 6. View My Network
 7. Search for a job
 8. Messages
-Enter your choice:
+Enter your choice:  
 1. Create/Edit Profile
 2. View My Profile
 3. Search for User
@@ -52,6 +52,9 @@ Enter your choice:
 6. View My Network
 7. Search for a job
 8. Messages
-Enter your choice:
-Create/Edit Profile
-Enter First Name:
+Enter your choice:  
+Create/Edit Profile 
+Enter First Name:   
+libcob: error: READ after unsuccessful READ/START (status = 46) for file INPUT-FILE ('InCollege-Input_txt' => InCollege-Input.txt)
+libcob: warning: implicit CLOSE of OUTPUT-FILE ('InCollege-Output.txt')
+libcob: warning: implicit CLOSE of INPUT-FILE ('InCollege-Input.txt')

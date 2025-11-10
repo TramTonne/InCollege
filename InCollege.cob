@@ -226,6 +226,7 @@ WORKING-STORAGE SECTION.
    05 WS-TEMP-INPUT PIC X(200).
    05 WS-SEARCH-NAME PIC X(100).
    05 WS-FULL-NAME PIC X(100).
+   05 WS-FORMATTED-TIMESTAMP PIC X(20).
 01 WS-MESSAGES.
    05 WS-WELCOME-MSG PIC X(30) VALUE "Welcome to InCollege!".
    05 WS-MENU-OPT1 PIC X(20) VALUE "Log In".
@@ -2264,7 +2265,7 @@ VIEW-MESSAGES-PROCESS.
     MOVE "--- Your Messages ---" TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
     DISPLAY "--- Your Messages ---"
-    
+
     MOVE 'N' TO WS-CONNECTION-FOUND
     OPEN INPUT MESSAGES-FILE
     IF MESSAGES-STATUS = "35"
@@ -2286,31 +2287,32 @@ VIEW-MESSAGES-PROCESS.
             NOT AT END
                 IF FUNCTION TRIM(MSG-RECIPIENT-USERNAME) = FUNCTION TRIM(WS-USERNAME)
                     MOVE 'Y' TO WS-CONNECTION-FOUND
-                    
+
                     *> Lookup sender's full name for display
                     MOVE MSG-SENDER-USERNAME TO WS-LOOKUP-USERNAME
                     PERFORM LOOKUP-USER-NAME
-                    
+
                     MOVE SPACES TO OUTPUT-RECORD
                     STRING "From: " FUNCTION TRIM(WS-LOOKUP-FULL-NAME)
                         DELIMITED BY SIZE INTO OUTPUT-RECORD
                     WRITE OUTPUT-RECORD
                     DISPLAY "From: " FUNCTION TRIM(WS-LOOKUP-FULL-NAME)
-                    
+
                     MOVE SPACES TO OUTPUT-RECORD
                     STRING "Message: " FUNCTION TRIM(MSG-CONTENT)
                         DELIMITED BY SIZE INTO OUTPUT-RECORD
                     WRITE OUTPUT-RECORD
                     DISPLAY "Message: " FUNCTION TRIM(MSG-CONTENT)
-                    
+
                     IF FUNCTION TRIM(MSG-TIMESTAMP) NOT = SPACES
+                        PERFORM FORMAT-TIMESTAMP
                         MOVE SPACES TO OUTPUT-RECORD
-                        STRING "(Optional) Sent: " FUNCTION TRIM(MSG-TIMESTAMP)
+                        STRING "(Sent: " FUNCTION TRIM(WS-FORMATTED-TIMESTAMP) ")"
                             DELIMITED BY SIZE INTO OUTPUT-RECORD
                         WRITE OUTPUT-RECORD
-                        DISPLAY "(Optional) Sent: " FUNCTION TRIM(MSG-TIMESTAMP)
+                        DISPLAY "(Sent: " FUNCTION TRIM(WS-FORMATTED-TIMESTAMP) ")"
                     END-IF
-                    
+
                     MOVE "---" TO OUTPUT-RECORD
                     WRITE OUTPUT-RECORD
                     DISPLAY "---"
@@ -2328,6 +2330,25 @@ VIEW-MESSAGES-PROCESS.
     MOVE "------------------------" TO OUTPUT-RECORD
     WRITE OUTPUT-RECORD
     DISPLAY "------------------------".
+
+FORMAT-TIMESTAMP.
+    MOVE SPACES TO WS-FORMATTED-TIMESTAMP
+    IF FUNCTION LENGTH(FUNCTION TRIM(MSG-TIMESTAMP)) >= 14
+        *> Handle YYYYMMDDHHMMSS format (14 chars) or YYYYMMDD:HH:MM:SS (19 chars)
+        IF MSG-TIMESTAMP(9:1) = ":"
+            *> Format with colons: YYYYMMDD:HH:MM:SS
+            STRING MSG-TIMESTAMP(1:4) "-" MSG-TIMESTAMP(5:2) "-" MSG-TIMESTAMP(7:2)
+                   " " MSG-TIMESTAMP(10:2) ":" MSG-TIMESTAMP(13:2)
+                   DELIMITED BY SIZE INTO WS-FORMATTED-TIMESTAMP
+        ELSE
+            *> Format without colons: YYYYMMDDHHMMSS
+            STRING MSG-TIMESTAMP(1:4) "-" MSG-TIMESTAMP(5:2) "-" MSG-TIMESTAMP(7:2)
+                   " " MSG-TIMESTAMP(9:2) ":" MSG-TIMESTAMP(11:2)
+                   DELIMITED BY SIZE INTO WS-FORMATTED-TIMESTAMP
+        END-IF
+    ELSE
+        MOVE FUNCTION TRIM(MSG-TIMESTAMP) TO WS-FORMATTED-TIMESTAMP
+    END-IF.
 
 CHECK-USER-EXISTS.
     MOVE 'N' TO WS-ACCOUNT-EXISTS
