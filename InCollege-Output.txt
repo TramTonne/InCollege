@@ -44,14 +44,3 @@ Enter your choice:
 7. Search for a job
 8. Messages
 Enter your choice:
-1. Create/Edit Profile
-2. View My Profile
-3. Search for User
-4. Learn a New Skill
-5. View My Pending Connection Requests
-6. View My Network
-7. Search for a job
-8. Messages
-Enter your choice:
-Create/Edit Profile
-Enter First Name:
