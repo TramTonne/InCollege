@@ -1,7 +1,0 @@
-1
-JoseMartinez     
-Pass456! 
-8
-1
-MichaelTorres
-Hi Michael, it was so great meeting you at the SHPE conference. Our conversation about DevOPs really got me thinking more about Automation!  I would love to stay in touch.

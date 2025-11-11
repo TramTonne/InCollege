@@ -1,8 +1,0 @@
-1
-JoseMartinez
-Pass456!
-8
-1
-MichaelTorres
-Hey Michael, this is a long message to test if the 200-character validation is working properly. This message keeps going just to exceed the limit, making sure that the system displays an error and doesn’t save anything to messages.dat.
-3

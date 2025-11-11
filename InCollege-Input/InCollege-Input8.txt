@@ -1,8 +1,0 @@
-1
-JoseMartinez
-Pass456!
-8
-1
-MichaelTorres
-This is a very long message intended to exceed the two hundred character limit enforced by the COBOL PIC X(200) field. The purpose is to verify that the system either truncates or properly handles overflow without crashing or misbehaving during file I/O operations.
-3
