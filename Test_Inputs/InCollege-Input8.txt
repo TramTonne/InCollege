@@ -1,0 +1,11 @@
+1
+JoseMartinez
+Pass456!
+8
+1
+MichaelTorres
+Testing special characters: !@#$%^&*()_+{}|:"<>?`~[]\;',./
+3
+8
+2
+3
