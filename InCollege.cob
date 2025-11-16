@@ -1,0 +1,2182 @@
+IDENTIFICATION DIVISION.
+       PROGRAM-ID. INCOLLEGE.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT INPUT-FILE ASSIGN TO "InCollege-Input.txt"
+               ORGANIZATION IS LINE SEQUENTIAL.
+           SELECT OUTPUT-FILE ASSIGN TO "InCollege-Output.txt"
+               ORGANIZATION IS LINE SEQUENTIAL.
+           SELECT ACCOUNTS-FILE ASSIGN TO "accounts.dat"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS ACCOUNTS-STATUS.
+           SELECT PROFILES-FILE ASSIGN TO "profiles.dat"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS PROFILES-STATUS.
+           SELECT TEMP-PROFILES-FILE ASSIGN TO "temp-profiles.dat"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS TEMP-PROFILES-STATUS.
+           SELECT CONNECTIONS-FILE ASSIGN TO "connections.dat"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS CONNECTIONS-STATUS.
+           SELECT TEMP-CONNECTIONS-FILE ASSIGN TO "temp-connections.dat"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS TEMP-CONNECTIONS-STATUS.
+           SELECT JOBS-FILE ASSIGN TO "jobs.dat"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS JOBS-STATUS.
+           SELECT TEMP-JOBS-FILE ASSIGN TO "temp-jobs.dat"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS TEMP-JOBS-STATUS.
+           SELECT APPLICATIONS-FILE ASSIGN TO "applications.dat"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS APPLICATIONS-STATUS.
+           SELECT MESSAGES-FILE ASSIGN TO "messages.dat"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS MESSAGES-STATUS.
+
+       DATA DIVISION.
+       FILE SECTION.
+       FD INPUT-FILE.
+       01 INPUT-RECORD PIC X(500).
+
+       FD OUTPUT-FILE
+          RECORD IS VARYING IN SIZE FROM 1 TO 500 CHARACTERS
+          DEPENDING ON OUTPUT-LENGTH.
+       01 OUTPUT-RECORD PIC X(500).
+
+       FD ACCOUNTS-FILE.
+       01 ACCOUNT-RECORD.
+          05 ACCOUNT-USERNAME PIC X(20).
+          05 ACCOUNT-PASSWORD PIC X(12).
+          05 ACCOUNT-PASSWORD-LENGTH PIC 9(2).
+
+       FD PROFILES-FILE.
+       01 PROFILE-RECORD.
+          05 PROFILE-USERNAME PIC X(20).
+          05 PROFILE-FIRST-NAME PIC X(50).
+          05 PROFILE-LAST-NAME PIC X(50).
+          05 PROFILE-UNIVERSITY PIC X(100).
+          05 PROFILE-MAJOR PIC X(50).
+          05 PROFILE-GRAD-YEAR PIC X(4).
+          05 PROFILE-ABOUT PIC X(200).
+          05 PROFILE-EXP-COUNT PIC 9.
+          05 PROFILE-EXPERIENCE OCCURS 3 TIMES.
+             10 EXP-TITLE PIC X(100).
+             10 EXP-COMPANY PIC X(100).
+             10 EXP-DATES PIC X(50).
+             10 EXP-DESC PIC X(200).
+          05 PROFILE-EDU-COUNT PIC 9.
+          05 PROFILE-EDUCATION OCCURS 3 TIMES.
+             10 EDU-DEGREE PIC X(100).
+             10 EDU-UNIVERSITY PIC X(100).
+             10 EDU-YEARS PIC X(50).
+
+       FD TEMP-PROFILES-FILE.
+       01 TEMP-PROFILE-RECORD.
+          05 TEMP-PROFILE-USERNAME PIC X(20).
+          05 TEMP-PROFILE-FIRST-NAME PIC X(50).
+          05 TEMP-PROFILE-LAST-NAME PIC X(50).
+          05 TEMP-PROFILE-UNIVERSITY PIC X(100).
+          05 TEMP-PROFILE-MAJOR PIC X(50).
+          05 TEMP-PROFILE-GRAD-YEAR PIC X(4).
+          05 TEMP-PROFILE-ABOUT PIC X(200).
+          05 TEMP-PROFILE-EXP-COUNT PIC 9.
+          05 TEMP-PROFILE-EXPERIENCE OCCURS 3 TIMES.
+             10 TEMP-EXP-TITLE PIC X(100).
+             10 TEMP-EXP-COMPANY PIC X(100).
+             10 TEMP-EXP-DATES PIC X(50).
+             10 TEMP-EXP-DESC PIC X(200).
+          05 TEMP-PROFILE-EDU-COUNT PIC 9.
+          05 TEMP-PROFILE-EDUCATION OCCURS 3 TIMES.
+             10 TEMP-EDU-DEGREE PIC X(100).
+             10 TEMP-EDU-UNIVERSITY PIC X(100).
+             10 TEMP-EDU-YEARS PIC X(50).
+
+       FD CONNECTIONS-FILE.
+       01 CONNECTION-RECORD.
+          05 CONN-SENDER-USERNAME PIC X(20).
+          05 CONN-RECIPIENT-USERNAME PIC X(20).
+          05 CONN-STATUS PIC X(10).
+          05 CONN-MESSAGE PIC X(200).
+          05 CONN-TIMESTAMP PIC X(19).
+
+       FD TEMP-CONNECTIONS-FILE.
+       01 TEMP-CONNECTION-RECORD.
+          05 TEMP-CONN-SENDER-USERNAME PIC X(20).
+          05 TEMP-CONN-RECIPIENT-USERNAME PIC X(20).
+          05 TEMP-CONN-STATUS PIC X(10).
+          05 TEMP-CONN-MESSAGE PIC X(200).
+          05 TEMP-CONN-TIMESTAMP PIC X(19).
+
+       FD JOBS-FILE.
+       01 JOB-RECORD.
+          05 JOB-ID PIC 9(6).
+          05 JOB-TITLE PIC X(100).
+          05 JOB-DESCRIPTION PIC X(200).
+          05 JOB-EMPLOYER PIC X(100).
+          05 JOB-LOCATION PIC X(100).
+          05 JOB-SALARY PIC X(50).
+          05 JOB-POSTER-USERNAME PIC X(20).
+          05 JOB-TIMESTAMP PIC X(19).
+
+       FD TEMP-JOBS-FILE.
+       01 TEMP-JOB-RECORD.
+          05 TEMP-JOB-ID PIC 9(6).
+          05 TEMP-JOB-TITLE PIC X(100).
+          05 TEMP-JOB-DESCRIPTION PIC X(200).
+          05 TEMP-JOB-EMPLOYER PIC X(100).
+          05 TEMP-JOB-LOCATION PIC X(100).
+          05 TEMP-JOB-SALARY PIC X(50).
+          05 TEMP-JOB-POSTER-USERNAME PIC X(20).
+          05 TEMP-JOB-TIMESTAMP PIC X(19).
+
+       FD APPLICATIONS-FILE.
+       01 APPLICATION-RECORD.
+          05 APP-USERNAME PIC X(20).
+          05 APP-JOB-ID PIC 9(6).
+          05 APP-JOB-TITLE PIC X(100).
+          05 APP-JOB-EMPLOYER PIC X(100).
+          05 APP-JOB-LOCATION PIC X(100).
+          05 APP-TIMESTAMP PIC X(19).
+
+       FD MESSAGES-FILE.
+       01 MESSAGE-RECORD.
+          05 MSG-SENDER-USERNAME PIC X(20).
+          05 MSG-RECIPIENT-USERNAME PIC X(20).
+          05 MSG-CONTENT PIC X(200).
+          05 MSG-TIMESTAMP PIC X(19).
+
+       WORKING-STORAGE SECTION.
+       01  OUTPUT-LENGTH PIC 9(3).
+       01  WS-LONG-MSG   PIC X(500).
+       01  WS-LEN        PIC 9(3).
+       01  WS-DISPLAY-MSG PIC X(500).
+       01  WS-OUTPUT-BUFFER PIC X(500).
+
+       01 WS-FLAGS.
+          05 WS-EOF-FLAG PIC X VALUE 'N'.
+             88 WS-END-OF-FILE VALUE 'Y'.
+          05 WS-VALID-PASSWORD PIC X VALUE 'N'.
+          05 WS-VALID-GRAD-YEAR PIC X VALUE 'N'.
+          05 WS-ACCOUNT-EXISTS PIC X VALUE 'N'.
+          05 WS-LOGGED-IN PIC X VALUE 'N'.
+          05 WS-EXIT-FLAG PIC X VALUE 'N'.
+          05 WS-PROFILE-FOUND PIC X VALUE 'N'.
+          05 WS-PROFILE-UPDATED PIC X VALUE 'N'.
+          05 WS-VIEW-SEARCH PIC X VALUE 'N'.
+             88 VIEWING-SEARCH VALUE 'Y'.
+             88 VIEWING-OWN    VALUE 'N'.
+          05 WS-CONNECTION-FOUND PIC X VALUE 'N'.
+          05 WS-CONN-REQUEST-EXISTS PIC X VALUE 'N'.
+          05 WS-CONN-ALREADY-CONNECTED PIC X VALUE 'N'.
+          05 WS-JOB-POSTED PIC X VALUE 'N'.
+          05 WS-JOB-FOUND PIC X VALUE 'N'.
+          05 WS-JOB-EXIT-FLAG PIC X VALUE 'N'.
+          05 WS-DUPLICATE-JOB PIC X VALUE 'N'.
+          05 WS-MSG-EXIT-FLAG PIC X VALUE 'N'.
+          05 WS-IS-CONNECTED PIC X VALUE 'N'.
+
+       01 WS-COUNTERS.
+          05 WS-ACCOUNT-COUNT PIC 9(2) VALUE 0.
+          05 WS-CHAR-COUNT PIC 9(2) VALUE 0.
+          05 WS-UPPER-COUNT PIC 9(2) VALUE 0.
+          05 WS-DIGIT-COUNT PIC 9(2) VALUE 0.
+          05 WS-SPECIAL-COUNT PIC 9(2) VALUE 0.
+          05 WS-EXP-COUNT PIC 9 VALUE 0.
+          05 WS-EDU-COUNT PIC 9 VALUE 0.
+          05 WS-EXP-IDX PIC 9.
+          05 WS-EDU-IDX PIC 9.
+          05 WS-INDEX PIC 9(2).
+          05 WS-JOB-COUNT PIC 9(6) VALUE 0.
+          05 WS-NEXT-JOB-ID PIC 9(6) VALUE 1.
+          05 WS-BROWSE-COUNT PIC 9(3) VALUE 0.
+          05 WS-SELECT-INDEX PIC 9(6) VALUE 0.
+          05 WS-NUM-BUF PIC X(6).
+          05 WS-APP-COUNT PIC 9(3) VALUE 0.
+          05 WS-MSG-COUNT PIC 9(6) VALUE 0.
+
+       01 WS-INPUT-DATA.
+          05 WS-MENU-CHOICE PIC X(2).
+          05 WS-USERNAME PIC X(20).
+          05 WS-PASSWORD PIC X(12).
+          05 WS-SKILL-CHOICE PIC X(2).
+          05 WS-CONN-CHOICE PIC X(2).
+          05 WS-TARGET-USERNAME PIC X(20).
+          05 WS-CONNECTION-MESSAGE PIC X(200).
+          05 WS-JOB-CHOICE PIC X(2).
+          05 WS-JOB-TITLE PIC X(100).
+          05 WS-JOB-DESCRIPTION PIC X(200).
+          05 WS-JOB-EMPLOYER PIC X(100).
+          05 WS-JOB-LOCATION PIC X(100).
+          05 WS-JOB-SALARY PIC X(50).
+          05 WS-DETAIL-JOB-ID PIC 9(6).
+          05 WS-DETAIL-TITLE PIC X(100).
+          05 WS-DETAIL-DESC PIC X(200).
+          05 WS-DETAIL-EMPLOYER PIC X(100).
+          05 WS-DETAIL-LOCATION PIC X(100).
+          05 WS-DETAIL-SALARY PIC X(50).
+          05 WS-MSG-CHOICE PIC X(2).
+          05 WS-MSG-RECIPIENT PIC X(20).
+          05 WS-MSG-CONTENT PIC X(200).
+
+       01 WS-PROFILE-DATA.
+          05 WS-FIRST-NAME PIC X(50).
+          05 WS-LAST-NAME PIC X(50).
+          05 WS-UNIVERSITY PIC X(100).
+          05 WS-MAJOR PIC X(50).
+          05 WS-GRAD-YEAR PIC X(4).
+          05 WS-ABOUT PIC X(200).
+
+       01 WS-EXPERIENCE-DATA.
+          05 WS-EXP-TITLE PIC X(100).
+          05 WS-EXP-COMPANY PIC X(100).
+          05 WS-EXP-DATES PIC X(50).
+          05 WS-EXP-DESC PIC X(200).
+
+       01 WS-EDUCATION-DATA.
+          05 WS-EDU-DEGREE PIC X(100).
+          05 WS-EDU-UNIVERSITY PIC X(100).
+          05 WS-EDU-YEARS PIC X(50).
+
+       01 WS-SEARCH-USERNAME PIC X(20).
+       01 WS-FORMATTED-TIMESTAMP PIC X(30).
+       01 WS-SELECTED-CONN-SENDER PIC X(20).
+       01 WS-CONN-ACTION PIC X(2).
+       01 WS-DISPLAY-COUNTER PIC Z(5)9.
+
+       01 FILE-STATUSES.
+          05 ACCOUNTS-STATUS PIC XX.
+          05 PROFILES-STATUS PIC XX.
+          05 TEMP-PROFILES-STATUS PIC XX.
+          05 CONNECTIONS-STATUS PIC XX.
+          05 TEMP-CONNECTIONS-STATUS PIC XX.
+          05 JOBS-STATUS PIC XX.
+          05 TEMP-JOBS-STATUS PIC XX.
+          05 APPLICATIONS-STATUS PIC XX.
+          05 MESSAGES-STATUS PIC XX.
+
+       01 WS-CONSTANTS.
+          05 WS-WELCOME-MSG PIC X(30) VALUE "Welcome to InCollege!".
+          05 WS-LOGIN-PROMPT PIC X(9) VALUE "1. Log In".
+          05 WS-CREATE-PROMPT PIC X(21) VALUE "2. Create New Account".
+          05 WS-CHOICE-PROMPT PIC X(18) VALUE "Enter your choice:".
+          05 WS-USERNAME-PROMPT PIC X(27) VALUE
+             "Please enter your username:".
+          05 WS-PASSWORD-PROMPT PIC X(27) VALUE
+             "Please enter your password:".
+          05 WS-LOGIN-SUCCESS PIC X(32) VALUE
+             "You have successfully logged in.".
+          05 WS-INVALID-CHOICE PIC X(26) VALUE
+             "Invalid choice. Try again.".
+          05 WS-PASSWORD-ERROR PIC X(97) VALUE
+             "Password must be 8-12 characters, at least one uppercase letter, one digit, one special character".
+          05 WS-MAIN-MENU-HEADER PIC X(10) VALUE "Main Menu:".
+          05 WS-MAIN-MENU-1 PIC X(25) VALUE
+             "1. Create/Edit My Profile".
+          05 WS-MAIN-MENU-2 PIC X(18) VALUE "2. View My Profile".
+          05 WS-MAIN-MENU-3 PIC X(18) VALUE "3. Search for User".
+          05 WS-MAIN-MENU-4 PIC X(20) VALUE "4. Learn a New Skill".
+          05 WS-MAIN-MENU-5 PIC X(38) VALUE
+             "5. View My Pending Connection Requests".
+          05 WS-MAIN-MENU-6 PIC X(18) VALUE "6. View My Network".
+          05 WS-MAIN-MENU-7 PIC X(24) VALUE
+             "7. Job Search/Internship".
+          05 WS-MAIN-MENU-8 PIC X(11) VALUE "8. Messages".
+          05 WS-MAIN-MENU-9 PIC X(7) VALUE "9. Exit".
+          05 WS-JOB-MENU-HEADER PIC X(34) VALUE
+             "--- Job Search/Internship Menu ---".
+          05 WS-JOB-MENU-1 PIC X(25) VALUE "1. Post a Job/Internship".
+          05 WS-JOB-MENU-2 PIC X(26) VALUE "2. Browse Jobs/Internships".
+          05 WS-JOB-MENU-3 PIC X(23) VALUE "3. View My Applications".
+          05 WS-JOB-MENU-4 PIC X(20) VALUE "4. Back to Main Menu".
+          05 WS-JOB-TITLE-PROMPT PIC X(26) VALUE
+             "Enter the job title:".
+          05 WS-JOB-DESC-PROMPT PIC X(33) VALUE
+             "Enter the job description:".
+          05 WS-JOB-EMPLOYER-PROMPT PIC X(23) VALUE
+             "Enter the employer:".
+          05 WS-JOB-LOCATION-PROMPT PIC X(35) VALUE
+             "Enter the location:".
+          05 WS-JOB-SALARY-PROMPT PIC X(50) VALUE
+             "Enter the salary (or 'none'):".
+          05 WS-JOB-POSTED-SUCCESS PIC X(30) VALUE
+             "Job posted successfully!".
+          05 WS-MSG-MENU-HEADER PIC X(21) VALUE "--- Messages Menu ---".
+          05 WS-MSG-MENU-1 PIC X(21) VALUE "1. Send a New Message".
+          05 WS-MSG-MENU-2 PIC X(19) VALUE "2. View My Messages".
+          05 WS-MSG-MENU-3 PIC X(20) VALUE "3. Back to Main Menu".
+
+       PROCEDURE DIVISION.
+       MAIN-PROCEDURE.
+           OPEN INPUT INPUT-FILE
+           OPEN OUTPUT OUTPUT-FILE
+
+           MOVE FUNCTION TRIM(WS-WELCOME-MSG) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-WELCOME-MSG)
+
+           PERFORM UNTIL WS-END-OF-FILE OR WS-EXIT-FLAG = 'Y'
+               IF WS-LOGGED-IN = 'N'
+                   PERFORM SHOW-LOGIN-MENU
+               ELSE
+                   PERFORM SHOW-MAIN-MENU
+               END-IF
+           END-PERFORM
+
+           PERFORM CLEANUP
+           STOP RUN.
+
+       SHOW-LOGIN-MENU.
+           MOVE FUNCTION TRIM(WS-LOGIN-PROMPT) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-LOGIN-PROMPT)
+           MOVE FUNCTION TRIM(WS-CREATE-PROMPT) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-CREATE-PROMPT)
+           MOVE FUNCTION TRIM(WS-CHOICE-PROMPT) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-CHOICE-PROMPT)
+           READ INPUT-FILE INTO WS-MENU-CHOICE
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           EVALUATE FUNCTION TRIM(WS-MENU-CHOICE)
+               WHEN '1'
+                   PERFORM LOGIN-USER
+               WHEN '2'
+                   PERFORM CREATE-ACCOUNT
+               WHEN OTHER
+                   MOVE WS-INVALID-CHOICE TO OUTPUT-RECORD
+                   COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                   DISPLAY FUNCTION TRIM(WS-INVALID-CHOICE)
+           END-EVALUATE.
+
+       LOGIN-USER.
+           MOVE FUNCTION TRIM(WS-USERNAME-PROMPT) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-USERNAME-PROMPT)
+           READ INPUT-FILE INTO WS-USERNAME
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           MOVE FUNCTION TRIM(WS-PASSWORD-PROMPT) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-PASSWORD-PROMPT)
+           READ INPUT-FILE INTO WS-PASSWORD
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           PERFORM VALIDATE-LOGIN
+           IF WS-ACCOUNT-EXISTS = 'Y'
+               MOVE 'Y' TO WS-LOGGED-IN
+           MOVE FUNCTION TRIM(WS-LOGIN-SUCCESS) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-LOGIN-SUCCESS)
+               MOVE SPACES TO WS-DISPLAY-MSG
+               STRING "Welcome, "
+                      FUNCTION TRIM(WS-USERNAME)
+                      "!"
+                      DELIMITED BY SIZE
+                      INTO WS-DISPLAY-MSG
+               MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+           ELSE
+               MOVE "Invalid username or password!" TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "Invalid username or password!"
+           END-IF.
+
+       VALIDATE-LOGIN.
+           MOVE 'N' TO WS-ACCOUNT-EXISTS
+           OPEN INPUT ACCOUNTS-FILE
+           IF ACCOUNTS-STATUS = "00" OR ACCOUNTS-STATUS = "97"
+               PERFORM UNTIL WS-ACCOUNT-EXISTS = 'Y'
+                   READ ACCOUNTS-FILE
+                       AT END
+                           EXIT PERFORM
+                   END-READ
+                   IF FUNCTION TRIM(ACCOUNT-USERNAME) =
+                      FUNCTION TRIM(WS-USERNAME) AND
+                      FUNCTION TRIM(ACCOUNT-PASSWORD) =
+                      FUNCTION TRIM(WS-PASSWORD)
+                       MOVE 'Y' TO WS-ACCOUNT-EXISTS
+                   END-IF
+               END-PERFORM
+               CLOSE ACCOUNTS-FILE
+           END-IF.
+
+       CREATE-ACCOUNT.
+           PERFORM COUNT-ACCOUNTS
+           IF WS-ACCOUNT-COUNT >= 5
+               MOVE "Maximum of 5 accounts reached!" TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "Maximum of 5 accounts reached!"
+               EXIT PARAGRAPH
+           END-IF
+
+           MOVE FUNCTION TRIM(WS-USERNAME-PROMPT) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-USERNAME-PROMPT)
+           READ INPUT-FILE INTO WS-USERNAME
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           MOVE WS-USERNAME TO WS-TARGET-USERNAME
+           PERFORM CHECK-USER-EXISTS
+           IF WS-ACCOUNT-EXISTS = 'Y'
+               MOVE "Username already exists!" TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "Username already exists!"
+               EXIT PARAGRAPH
+           END-IF
+
+           MOVE FUNCTION TRIM(WS-PASSWORD-PROMPT) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-PASSWORD-PROMPT)
+           READ INPUT-FILE INTO WS-PASSWORD
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           PERFORM VALIDATE-PASSWORD
+           IF WS-VALID-PASSWORD = 'N'
+               MOVE WS-PASSWORD-ERROR TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-PASSWORD-ERROR)
+               EXIT PARAGRAPH
+           END-IF
+
+           PERFORM SAVE-ACCOUNT
+           MOVE "Account created successfully!" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "Account created successfully!"
+           MOVE 'Y' TO WS-LOGGED-IN
+           MOVE SPACES TO WS-DISPLAY-MSG
+           STRING "Welcome, "
+                  FUNCTION TRIM(WS-USERNAME)
+                  "!"
+                  DELIMITED BY SIZE
+                  INTO WS-DISPLAY-MSG
+           MOVE FUNCTION TRIM(WS-DISPLAY-MSG) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG).
+
+       COUNT-ACCOUNTS.
+           MOVE 0 TO WS-ACCOUNT-COUNT
+           OPEN INPUT ACCOUNTS-FILE
+           IF ACCOUNTS-STATUS = "00"
+               PERFORM UNTIL 1 = 0
+                   READ ACCOUNTS-FILE
+                       AT END
+                           EXIT PERFORM
+                   END-READ
+                   ADD 1 TO WS-ACCOUNT-COUNT
+               END-PERFORM
+               CLOSE ACCOUNTS-FILE
+           END-IF.
+
+       CHECK-USER-EXISTS.
+           MOVE 'N' TO WS-ACCOUNT-EXISTS
+           OPEN INPUT ACCOUNTS-FILE
+           IF ACCOUNTS-STATUS = "00" OR ACCOUNTS-STATUS = "97"
+               PERFORM UNTIL WS-ACCOUNT-EXISTS = 'Y'
+                   READ ACCOUNTS-FILE
+                       AT END
+                           EXIT PERFORM
+                   END-READ
+                   IF FUNCTION TRIM(ACCOUNT-USERNAME) =
+                      FUNCTION TRIM(WS-TARGET-USERNAME)
+                       MOVE 'Y' TO WS-ACCOUNT-EXISTS
+                   END-IF
+               END-PERFORM
+               CLOSE ACCOUNTS-FILE
+           END-IF.
+
+       VALIDATE-PASSWORD.
+           MOVE 'N' TO WS-VALID-PASSWORD
+           MOVE 0 TO WS-CHAR-COUNT
+           MOVE 0 TO WS-UPPER-COUNT
+           MOVE 0 TO WS-DIGIT-COUNT
+           MOVE 0 TO WS-SPECIAL-COUNT
+
+           COMPUTE WS-CHAR-COUNT =
+               FUNCTION LENGTH(FUNCTION TRIM(WS-PASSWORD))
+
+           IF WS-CHAR-COUNT < 8 OR WS-CHAR-COUNT > 12
+               EXIT PARAGRAPH
+           END-IF
+
+           PERFORM VARYING WS-INDEX FROM 1 BY 1
+               UNTIL WS-INDEX > WS-CHAR-COUNT
+               EVALUATE TRUE
+                   WHEN WS-PASSWORD(WS-INDEX:1) >= 'A' AND
+                        WS-PASSWORD(WS-INDEX:1) <= 'Z'
+                       ADD 1 TO WS-UPPER-COUNT
+                   WHEN WS-PASSWORD(WS-INDEX:1) >= '0' AND
+                        WS-PASSWORD(WS-INDEX:1) <= '9'
+                       ADD 1 TO WS-DIGIT-COUNT
+                   WHEN WS-PASSWORD(WS-INDEX:1) = '!' OR
+                        WS-PASSWORD(WS-INDEX:1) = '@' OR
+                        WS-PASSWORD(WS-INDEX:1) = '#' OR
+                        WS-PASSWORD(WS-INDEX:1) = '$' OR
+                        WS-PASSWORD(WS-INDEX:1) = '%' OR
+                        WS-PASSWORD(WS-INDEX:1) = '^' OR
+                        WS-PASSWORD(WS-INDEX:1) = '&' OR
+                        WS-PASSWORD(WS-INDEX:1) = '*' OR
+                        WS-PASSWORD(WS-INDEX:1) = '(' OR
+                        WS-PASSWORD(WS-INDEX:1) = ')'
+                       ADD 1 TO WS-SPECIAL-COUNT
+               END-EVALUATE
+           END-PERFORM
+
+           IF WS-UPPER-COUNT >= 1 AND
+              WS-DIGIT-COUNT >= 1 AND
+              WS-SPECIAL-COUNT >= 1
+               MOVE 'Y' TO WS-VALID-PASSWORD
+           END-IF.
+
+       SAVE-ACCOUNT.
+           OPEN EXTEND ACCOUNTS-FILE
+           MOVE SPACES TO ACCOUNT-RECORD
+           MOVE FUNCTION TRIM(WS-USERNAME) TO ACCOUNT-USERNAME
+           MOVE FUNCTION TRIM(WS-PASSWORD) TO ACCOUNT-PASSWORD
+           COMPUTE ACCOUNT-PASSWORD-LENGTH =
+               FUNCTION LENGTH(FUNCTION TRIM(WS-PASSWORD))
+           WRITE ACCOUNT-RECORD
+           CLOSE ACCOUNTS-FILE
+           ADD 1 TO WS-ACCOUNT-COUNT.
+
+       SHOW-MAIN-MENU.
+           MOVE FUNCTION TRIM(WS-MAIN-MENU-HEADER) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-MAIN-MENU-HEADER)
+           MOVE FUNCTION TRIM(WS-MAIN-MENU-1) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-MAIN-MENU-1)
+           MOVE FUNCTION TRIM(WS-MAIN-MENU-2) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-MAIN-MENU-2)
+           MOVE FUNCTION TRIM(WS-MAIN-MENU-3) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-MAIN-MENU-3)
+           MOVE FUNCTION TRIM(WS-MAIN-MENU-4) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-MAIN-MENU-4)
+           MOVE FUNCTION TRIM(WS-MAIN-MENU-5) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-MAIN-MENU-5)
+           MOVE FUNCTION TRIM(WS-MAIN-MENU-6) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-MAIN-MENU-6)
+           MOVE FUNCTION TRIM(WS-MAIN-MENU-7) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-MAIN-MENU-7)
+           MOVE FUNCTION TRIM(WS-MAIN-MENU-8) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-MAIN-MENU-8)
+           MOVE FUNCTION TRIM(WS-MAIN-MENU-9) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-MAIN-MENU-9)
+           MOVE FUNCTION TRIM(WS-CHOICE-PROMPT) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-CHOICE-PROMPT)
+
+           READ INPUT-FILE INTO WS-MENU-CHOICE
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           EVALUATE FUNCTION TRIM(WS-MENU-CHOICE)
+               WHEN '1'
+                   PERFORM CREATE-EDIT-PROFILE
+               WHEN '2'
+                   PERFORM VIEW-MY-PROFILE
+               WHEN '3'
+                   PERFORM SEARCH-USER
+               WHEN '4'
+                   PERFORM LEARN-SKILL
+               WHEN '5'
+                   PERFORM VIEW-PENDING-CONNECTIONS
+               WHEN '6'
+                   PERFORM VIEW-NETWORK
+               WHEN '7'
+                   PERFORM JOB-SEARCH-MENU
+               WHEN '8'
+                   PERFORM MESSAGES-MENU
+               WHEN '9'
+                   MOVE 'Y' TO WS-EXIT-FLAG
+               WHEN OTHER
+                   MOVE WS-INVALID-CHOICE TO OUTPUT-RECORD
+                   COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                   DISPLAY FUNCTION TRIM(WS-INVALID-CHOICE)
+           END-EVALUATE.
+
+       CREATE-EDIT-PROFILE.
+           MOVE "Enter First Name:" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "Enter First Name:"
+           READ INPUT-FILE INTO WS-FIRST-NAME
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           MOVE "Enter Last Name:" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "Enter Last Name:"
+           READ INPUT-FILE INTO WS-LAST-NAME
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           MOVE "Enter University:" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "Enter University:"
+           READ INPUT-FILE INTO WS-UNIVERSITY
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           MOVE "Enter Major:" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "Enter Major:"
+           READ INPUT-FILE INTO WS-MAJOR
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           MOVE "Enter Graduation Year (YYYY):" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "Enter Graduation Year (YYYY):"
+           READ INPUT-FILE INTO WS-GRAD-YEAR
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           PERFORM VALIDATE-GRAD-YEAR
+           IF WS-VALID-GRAD-YEAR = 'N'
+               MOVE "Invalid graduation year!" TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "Invalid graduation year!"
+               EXIT PARAGRAPH
+           END-IF
+
+           MOVE "Enter About (max 200 characters):" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "Enter About (max 200 characters):"
+           READ INPUT-FILE INTO WS-ABOUT
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           PERFORM SAVE-PROFILE
+           MOVE "Profile saved successfully!" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "Profile saved successfully!".
+
+       VALIDATE-GRAD-YEAR.
+           MOVE 'N' TO WS-VALID-GRAD-YEAR
+           IF FUNCTION TEST-NUMVAL(WS-GRAD-YEAR) = 0
+               IF FUNCTION NUMVAL(WS-GRAD-YEAR) >= 1900 AND
+                  FUNCTION NUMVAL(WS-GRAD-YEAR) <= 2100
+                   MOVE 'Y' TO WS-VALID-GRAD-YEAR
+               END-IF
+           END-IF.
+
+       SAVE-PROFILE.
+           MOVE 'N' TO WS-PROFILE-UPDATED
+           PERFORM CHECK-PROFILE-EXISTS
+           IF WS-PROFILE-FOUND = 'Y'
+               PERFORM UPDATE-EXISTING-PROFILE
+           ELSE
+               PERFORM CREATE-NEW-PROFILE
+           END-IF.
+
+       CHECK-PROFILE-EXISTS.
+           MOVE 'N' TO WS-PROFILE-FOUND
+           OPEN INPUT PROFILES-FILE
+           IF PROFILES-STATUS = "00" OR PROFILES-STATUS = "97"
+               PERFORM UNTIL WS-PROFILE-FOUND = 'Y'
+                   READ PROFILES-FILE
+                       AT END
+                           EXIT PERFORM
+                   END-READ
+                   IF FUNCTION TRIM(PROFILE-USERNAME) =
+                      FUNCTION TRIM(WS-USERNAME)
+                       MOVE 'Y' TO WS-PROFILE-FOUND
+                   END-IF
+               END-PERFORM
+               CLOSE PROFILES-FILE
+           END-IF.
+
+       UPDATE-EXISTING-PROFILE.
+           OPEN INPUT PROFILES-FILE
+           OPEN OUTPUT TEMP-PROFILES-FILE
+
+           PERFORM UNTIL 1 = 0
+               READ PROFILES-FILE
+                   AT END
+                       EXIT PERFORM
+               END-READ
+
+               IF FUNCTION TRIM(PROFILE-USERNAME) =
+                  FUNCTION TRIM(WS-USERNAME)
+                   MOVE SPACES TO TEMP-PROFILE-RECORD
+                   MOVE FUNCTION TRIM(WS-USERNAME)
+                       TO TEMP-PROFILE-USERNAME
+                   MOVE FUNCTION TRIM(WS-FIRST-NAME)
+                       TO TEMP-PROFILE-FIRST-NAME
+                   MOVE FUNCTION TRIM(WS-LAST-NAME)
+                       TO TEMP-PROFILE-LAST-NAME
+                   MOVE FUNCTION TRIM(WS-UNIVERSITY)
+                       TO TEMP-PROFILE-UNIVERSITY
+                   MOVE FUNCTION TRIM(WS-MAJOR)
+                       TO TEMP-PROFILE-MAJOR
+                   MOVE WS-GRAD-YEAR TO TEMP-PROFILE-GRAD-YEAR
+                   MOVE WS-ABOUT TO TEMP-PROFILE-ABOUT
+                   MOVE PROFILE-EXP-COUNT TO TEMP-PROFILE-EXP-COUNT
+                   PERFORM VARYING WS-EXP-IDX FROM 1 BY 1
+                       UNTIL WS-EXP-IDX > 3
+                       MOVE EXP-TITLE(WS-EXP-IDX) TO TEMP-EXP-TITLE(WS-EXP-IDX)
+                       MOVE EXP-COMPANY(WS-EXP-IDX) TO TEMP-EXP-COMPANY(WS-EXP-IDX)
+                       MOVE EXP-DATES(WS-EXP-IDX) TO TEMP-EXP-DATES(WS-EXP-IDX)
+                       MOVE EXP-DESC(WS-EXP-IDX) TO TEMP-EXP-DESC(WS-EXP-IDX)
+                   END-PERFORM
+                   MOVE PROFILE-EDU-COUNT TO TEMP-PROFILE-EDU-COUNT
+                   PERFORM VARYING WS-EDU-IDX FROM 1 BY 1
+                       UNTIL WS-EDU-IDX > 3
+                       MOVE EDU-DEGREE(WS-EDU-IDX) TO TEMP-EDU-DEGREE(WS-EDU-IDX)
+                       MOVE EDU-UNIVERSITY(WS-EDU-IDX) TO TEMP-EDU-UNIVERSITY(WS-EDU-IDX)
+                       MOVE EDU-YEARS(WS-EDU-IDX) TO TEMP-EDU-YEARS(WS-EDU-IDX)
+                   END-PERFORM
+                   WRITE TEMP-PROFILE-RECORD
+               ELSE
+                   MOVE PROFILE-RECORD TO TEMP-PROFILE-RECORD
+                   WRITE TEMP-PROFILE-RECORD
+               END-IF
+           END-PERFORM
+
+           CLOSE PROFILES-FILE
+           CLOSE TEMP-PROFILES-FILE
+
+           CALL "SYSTEM" USING "rm profiles.dat 2>/dev/null || del profiles.dat 2>nul || del profiles.dat"
+           CALL "SYSTEM" USING "mv temp-profiles.dat profiles.dat 2>/dev/null || ren temp-profiles.dat profiles.dat || ren temp-profiles.dat profiles.dat".
+
+       CREATE-NEW-PROFILE.
+           OPEN EXTEND PROFILES-FILE
+           MOVE SPACES TO PROFILE-RECORD
+           MOVE FUNCTION TRIM(WS-USERNAME) TO PROFILE-USERNAME
+           MOVE FUNCTION TRIM(WS-FIRST-NAME) TO PROFILE-FIRST-NAME
+           MOVE FUNCTION TRIM(WS-LAST-NAME) TO PROFILE-LAST-NAME
+           MOVE FUNCTION TRIM(WS-UNIVERSITY) TO PROFILE-UNIVERSITY
+           MOVE FUNCTION TRIM(WS-MAJOR) TO PROFILE-MAJOR
+           MOVE WS-GRAD-YEAR TO PROFILE-GRAD-YEAR
+           MOVE WS-ABOUT TO PROFILE-ABOUT
+           MOVE 0 TO PROFILE-EXP-COUNT
+           MOVE 0 TO PROFILE-EDU-COUNT
+           WRITE PROFILE-RECORD
+           CLOSE PROFILES-FILE.
+
+       VIEW-MY-PROFILE.
+           MOVE FUNCTION TRIM(WS-USERNAME) TO WS-SEARCH-USERNAME
+           MOVE 'N' TO WS-VIEW-SEARCH
+           PERFORM DISPLAY-PROFILE.
+
+       SEARCH-USER.
+           MOVE "Enter username to search:" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "Enter username to search:"
+           READ INPUT-FILE INTO WS-SEARCH-USERNAME
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           MOVE 'Y' TO WS-VIEW-SEARCH
+           PERFORM DISPLAY-PROFILE.
+
+       DISPLAY-PROFILE.
+           MOVE 'N' TO WS-PROFILE-FOUND
+           OPEN INPUT PROFILES-FILE
+           IF PROFILES-STATUS = "00" OR PROFILES-STATUS = "97"
+               PERFORM UNTIL WS-PROFILE-FOUND = 'Y'
+                   READ PROFILES-FILE
+                       AT END
+                           EXIT PERFORM
+                   END-READ
+                   IF FUNCTION TRIM(PROFILE-USERNAME) =
+                      FUNCTION TRIM(WS-SEARCH-USERNAME)
+                       MOVE 'Y' TO WS-PROFILE-FOUND
+                       PERFORM SHOW-PROFILE-DETAILS
+                   END-IF
+               END-PERFORM
+               CLOSE PROFILES-FILE
+           END-IF
+
+           IF WS-PROFILE-FOUND = 'N'
+               MOVE "Profile not found!" TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "Profile not found!"
+           ELSE
+               IF WS-VIEW-SEARCH = 'Y' AND
+                  FUNCTION TRIM(WS-SEARCH-USERNAME) <>
+                  FUNCTION TRIM(WS-USERNAME)
+                   PERFORM HANDLE-CONNECTION-REQUEST
+               END-IF
+           END-IF.
+
+       SHOW-PROFILE-DETAILS.
+           MOVE "--- Profile ---" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "--- Profile ---"
+
+           MOVE SPACES TO WS-DISPLAY-MSG
+           STRING "Name: "
+                  FUNCTION TRIM(PROFILE-FIRST-NAME)
+                  " "
+                  FUNCTION TRIM(PROFILE-LAST-NAME)
+                  DELIMITED BY SIZE
+                  INTO WS-DISPLAY-MSG
+           MOVE FUNCTION TRIM(WS-DISPLAY-MSG) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+
+           MOVE SPACES TO WS-DISPLAY-MSG
+           STRING "University: "
+                  FUNCTION TRIM(PROFILE-UNIVERSITY)
+                  DELIMITED BY SIZE
+                  INTO WS-DISPLAY-MSG
+           MOVE FUNCTION TRIM(WS-DISPLAY-MSG) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+
+           MOVE SPACES TO WS-DISPLAY-MSG
+           STRING "Major: "
+                  FUNCTION TRIM(PROFILE-MAJOR)
+                  DELIMITED BY SIZE
+                  INTO WS-DISPLAY-MSG
+           MOVE FUNCTION TRIM(WS-DISPLAY-MSG) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+
+           MOVE SPACES TO WS-DISPLAY-MSG
+           STRING "Graduation Year: "
+                  FUNCTION TRIM(PROFILE-GRAD-YEAR)
+                  DELIMITED BY SIZE
+                  INTO WS-DISPLAY-MSG
+           MOVE FUNCTION TRIM(WS-DISPLAY-MSG) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+
+           IF FUNCTION LENGTH(FUNCTION TRIM(PROFILE-ABOUT)) > 0
+               MOVE SPACES TO WS-DISPLAY-MSG
+               STRING "About: "
+                      FUNCTION TRIM(PROFILE-ABOUT)
+                      DELIMITED BY SIZE
+                      INTO WS-DISPLAY-MSG
+               MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+           END-IF
+
+           IF PROFILE-EXP-COUNT > 0
+               MOVE "Experience:" TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "Experience:"
+               PERFORM VARYING WS-EXP-IDX FROM 1 BY 1
+                   UNTIL WS-EXP-IDX > PROFILE-EXP-COUNT
+                   IF FUNCTION LENGTH(FUNCTION TRIM(EXP-TITLE(WS-EXP-IDX))) > 0
+                       MOVE SPACES TO WS-DISPLAY-MSG
+                       STRING "  Title: "
+                              FUNCTION TRIM(EXP-TITLE(WS-EXP-IDX))
+                              DELIMITED BY SIZE
+                              INTO WS-DISPLAY-MSG
+                       MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+                       MOVE SPACES TO WS-DISPLAY-MSG
+                       STRING "  Company: "
+                              FUNCTION TRIM(EXP-COMPANY(WS-EXP-IDX))
+                              DELIMITED BY SIZE
+                              INTO WS-DISPLAY-MSG
+                       MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+                       MOVE SPACES TO WS-DISPLAY-MSG
+                       STRING "  Dates: "
+                              FUNCTION TRIM(EXP-DATES(WS-EXP-IDX))
+                              DELIMITED BY SIZE
+                              INTO WS-DISPLAY-MSG
+                       MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+                       IF FUNCTION LENGTH(FUNCTION TRIM(EXP-DESC(WS-EXP-IDX))) > 0
+                           MOVE SPACES TO WS-DISPLAY-MSG
+                           STRING "  Description: "
+                                  FUNCTION TRIM(EXP-DESC(WS-EXP-IDX))
+                                  DELIMITED BY SIZE
+                                  INTO WS-DISPLAY-MSG
+                           MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+                           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                           DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+                       END-IF
+                   END-IF
+               END-PERFORM
+           END-IF
+
+           IF PROFILE-EDU-COUNT > 0
+               MOVE "Education:" TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "Education:"
+               PERFORM VARYING WS-EDU-IDX FROM 1 BY 1
+                   UNTIL WS-EDU-IDX > PROFILE-EDU-COUNT
+                   IF FUNCTION LENGTH(FUNCTION TRIM(EDU-DEGREE(WS-EDU-IDX))) > 0
+                       MOVE SPACES TO WS-DISPLAY-MSG
+                       STRING "  Degree: "
+                              FUNCTION TRIM(EDU-DEGREE(WS-EDU-IDX))
+                              DELIMITED BY SIZE
+                              INTO WS-DISPLAY-MSG
+                       MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+                       MOVE SPACES TO WS-DISPLAY-MSG
+                       STRING "  University: "
+                              FUNCTION TRIM(EDU-UNIVERSITY(WS-EDU-IDX))
+                              DELIMITED BY SIZE
+                              INTO WS-DISPLAY-MSG
+                       MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+                       MOVE SPACES TO WS-DISPLAY-MSG
+                       STRING "  Years: "
+                              FUNCTION TRIM(EDU-YEARS(WS-EDU-IDX))
+                              DELIMITED BY SIZE
+                              INTO WS-DISPLAY-MSG
+                       MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+                   END-IF
+               END-PERFORM
+           END-IF
+
+           MOVE "-------------------" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "-------------------".
+
+       LEARN-SKILL.
+           MOVE "--- Learn a New Skill ---" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "--- Learn a New Skill ---"
+           MOVE "1. Programming" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "1. Programming"
+           MOVE "2. Communication" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "2. Communication"
+           MOVE "3. Data Analysis" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "3. Data Analysis"
+           MOVE "4. Leadership" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "4. Leadership"
+           MOVE "5. Back to Main Menu" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "5. Back to Main Menu"
+           MOVE FUNCTION TRIM(WS-CHOICE-PROMPT) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-CHOICE-PROMPT)
+
+           READ INPUT-FILE INTO WS-SKILL-CHOICE
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           EVALUATE FUNCTION TRIM(WS-SKILL-CHOICE)
+               WHEN '1'
+                   MOVE "You selected Programming course!" TO OUTPUT-RECORD
+                   COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                   DISPLAY "You selected Programming course!"
+               WHEN '2'
+                   MOVE "You selected Communication course!"
+                       TO OUTPUT-RECORD
+                   COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                   DISPLAY "You selected Communication course!"
+               WHEN '3'
+                   MOVE "You selected Data Analysis course!"
+                       TO OUTPUT-RECORD
+                   COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                   DISPLAY "You selected Data Analysis course!"
+               WHEN '4'
+                   MOVE "You selected Leadership course!" TO OUTPUT-RECORD
+                   COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                   DISPLAY "You selected Leadership course!"
+               WHEN '5'
+                   CONTINUE
+               WHEN OTHER
+                   MOVE WS-INVALID-CHOICE TO OUTPUT-RECORD
+                   COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                   DISPLAY FUNCTION TRIM(WS-INVALID-CHOICE)
+           END-EVALUATE.
+
+       VIEW-PENDING-CONNECTIONS.
+           MOVE "--- Pending Connection Requests ---" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "--- Pending Connection Requests ---"
+
+           MOVE 0 TO WS-INDEX
+           OPEN INPUT CONNECTIONS-FILE
+           IF CONNECTIONS-STATUS = "00" OR CONNECTIONS-STATUS = "97"
+               PERFORM UNTIL 1 = 0
+                   READ CONNECTIONS-FILE
+                       AT END
+                           EXIT PERFORM
+                   END-READ
+                   IF FUNCTION TRIM(CONN-RECIPIENT-USERNAME) =
+                      FUNCTION TRIM(WS-USERNAME) AND
+                      FUNCTION TRIM(CONN-STATUS) = "PENDING"
+                       ADD 1 TO WS-INDEX
+                       MOVE SPACES TO WS-DISPLAY-MSG
+                       STRING FUNCTION TRIM(WS-INDEX)
+                              ". From: "
+                              FUNCTION TRIM(CONN-SENDER-USERNAME)
+                              DELIMITED BY SIZE
+                              INTO WS-DISPLAY-MSG
+                       MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+                       IF FUNCTION LENGTH(FUNCTION TRIM(CONN-MESSAGE)) > 0
+                           MOVE SPACES TO WS-DISPLAY-MSG
+                           STRING "   Message: "
+                                  FUNCTION TRIM(CONN-MESSAGE)
+                                  DELIMITED BY SIZE
+                                  INTO WS-DISPLAY-MSG
+                           MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+                           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                           DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+                       END-IF
+                   END-IF
+               END-PERFORM
+               CLOSE CONNECTIONS-FILE
+           END-IF
+
+           IF WS-INDEX = 0
+               MOVE "No pending connection requests." TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "No pending connection requests."
+           ELSE
+               MOVE "Enter request number to accept/decline (or 0 to go back):"
+                   TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "Enter request number to accept/decline (or 0 to go back):"
+               READ INPUT-FILE INTO WS-NUM-BUF
+                   AT END
+                       MOVE 'Y' TO WS-EOF-FLAG
+                       EXIT PARAGRAPH
+               END-READ
+
+               IF FUNCTION TEST-NUMVAL(WS-NUM-BUF) = 0
+                   COMPUTE WS-SELECT-INDEX =
+                       FUNCTION NUMVAL(FUNCTION TRIM(WS-NUM-BUF))
+                   IF WS-SELECT-INDEX = 0
+                       EXIT PARAGRAPH
+                   END-IF
+                   IF WS-SELECT-INDEX > 0 AND
+                      WS-SELECT-INDEX <= WS-INDEX
+                       PERFORM PROCESS-CONNECTION-REQUEST
+                   ELSE
+                       MOVE "Invalid request number!" TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY "Invalid request number!"
+                   END-IF
+               ELSE
+                   MOVE "Invalid input!" TO OUTPUT-RECORD
+                   COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                   DISPLAY "Invalid input!"
+               END-IF
+           END-IF
+
+           MOVE "-------------------------------------" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "-------------------------------------".
+
+       VIEW-NETWORK.
+           MOVE "--- My Network ---" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "--- My Network ---"
+
+           OPEN INPUT CONNECTIONS-FILE
+           IF CONNECTIONS-STATUS = "00" OR CONNECTIONS-STATUS = "97"
+               PERFORM UNTIL 1 = 0
+                   READ CONNECTIONS-FILE
+                       AT END
+                           EXIT PERFORM
+                   END-READ
+                   IF FUNCTION TRIM(CONN-STATUS) = "ACCEPTED"
+                       IF FUNCTION TRIM(CONN-SENDER-USERNAME) =
+                          FUNCTION TRIM(WS-USERNAME)
+                           MOVE SPACES TO WS-DISPLAY-MSG
+                           STRING "Connected with: "
+                                  FUNCTION TRIM(CONN-RECIPIENT-USERNAME)
+                                  DELIMITED BY SIZE
+                                  INTO WS-DISPLAY-MSG
+                           MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+                           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                           DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+                       ELSE IF FUNCTION TRIM(CONN-RECIPIENT-USERNAME) =
+                               FUNCTION TRIM(WS-USERNAME)
+                           MOVE SPACES TO WS-DISPLAY-MSG
+                           STRING "Connected with: "
+                                  FUNCTION TRIM(CONN-SENDER-USERNAME)
+                                  DELIMITED BY SIZE
+                                  INTO WS-DISPLAY-MSG
+                           MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+                           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                           DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+                       END-IF
+                   END-IF
+               END-PERFORM
+               CLOSE CONNECTIONS-FILE
+           END-IF
+
+           MOVE "------------------" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "------------------".
+
+       HANDLE-CONNECTION-REQUEST.
+           MOVE WS-SEARCH-USERNAME TO WS-TARGET-USERNAME
+           PERFORM CHECK-IF-ALREADY-CONNECTED-OR-PENDING
+           IF WS-CONNECTION-FOUND = 'Y'
+               MOVE "You are already connected or have a pending request with this user."
+                   TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY
+                   "You are already connected or have a pending request with this user."
+               EXIT PARAGRAPH
+           END-IF
+
+           MOVE "1. Send Connection Request" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "1. Send Connection Request"
+           MOVE "2. Back to Main Menu" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "2. Back to Main Menu"
+           MOVE FUNCTION TRIM(WS-CHOICE-PROMPT) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-CHOICE-PROMPT)
+
+           READ INPUT-FILE INTO WS-CONN-CHOICE
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           IF FUNCTION TRIM(WS-CONN-CHOICE) = '1'
+               MOVE "Enter message (optional, max 200 chars):"
+                   TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "Enter message (optional, max 200 chars):"
+               READ INPUT-FILE INTO WS-CONNECTION-MESSAGE
+                   AT END
+                       MOVE 'Y' TO WS-EOF-FLAG
+                       EXIT PARAGRAPH
+               END-READ
+               PERFORM SAVE-CONNECTION-REQUEST
+               MOVE "Connection request sent!" TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "Connection request sent!"
+           END-IF.
+
+       CHECK-IF-ALREADY-CONNECTED-OR-PENDING.
+           MOVE 'N' TO WS-CONNECTION-FOUND
+           OPEN INPUT CONNECTIONS-FILE
+           IF CONNECTIONS-STATUS = "00" OR CONNECTIONS-STATUS = "97"
+               PERFORM UNTIL WS-CONNECTION-FOUND = 'Y'
+                   READ CONNECTIONS-FILE
+                       AT END
+                           EXIT PERFORM
+                   END-READ
+                   IF (FUNCTION TRIM(CONN-SENDER-USERNAME) =
+                       FUNCTION TRIM(WS-USERNAME) AND
+                       FUNCTION TRIM(CONN-RECIPIENT-USERNAME) =
+                       FUNCTION TRIM(WS-TARGET-USERNAME)) OR
+                      (FUNCTION TRIM(CONN-SENDER-USERNAME) =
+                       FUNCTION TRIM(WS-TARGET-USERNAME) AND
+                       FUNCTION TRIM(CONN-RECIPIENT-USERNAME) =
+                       FUNCTION TRIM(WS-USERNAME))
+                       MOVE 'Y' TO WS-CONNECTION-FOUND
+                   END-IF
+               END-PERFORM
+               CLOSE CONNECTIONS-FILE
+           END-IF.
+
+       SAVE-CONNECTION-REQUEST.
+           OPEN EXTEND CONNECTIONS-FILE
+           MOVE SPACES TO CONNECTION-RECORD
+           MOVE FUNCTION TRIM(WS-USERNAME) TO CONN-SENDER-USERNAME
+           MOVE FUNCTION TRIM(WS-TARGET-USERNAME) TO CONN-RECIPIENT-USERNAME
+           MOVE "PENDING" TO CONN-STATUS
+           MOVE FUNCTION TRIM(WS-CONNECTION-MESSAGE) TO CONN-MESSAGE
+           MOVE FUNCTION CURRENT-DATE(1:14) TO CONN-TIMESTAMP(1:14)
+           WRITE CONNECTION-RECORD
+           CLOSE CONNECTIONS-FILE.
+
+       PROCESS-CONNECTION-REQUEST.
+           MOVE 0 TO WS-INDEX
+           MOVE SPACES TO WS-SELECTED-CONN-SENDER
+           OPEN INPUT CONNECTIONS-FILE
+           IF CONNECTIONS-STATUS = "00" OR CONNECTIONS-STATUS = "97"
+               PERFORM UNTIL 1 = 0
+                   READ CONNECTIONS-FILE
+                       AT END
+                           EXIT PERFORM
+                   END-READ
+                   IF FUNCTION TRIM(CONN-RECIPIENT-USERNAME) =
+                      FUNCTION TRIM(WS-USERNAME) AND
+                      FUNCTION TRIM(CONN-STATUS) = "PENDING"
+                       ADD 1 TO WS-INDEX
+                       IF WS-INDEX = WS-SELECT-INDEX
+                           MOVE CONN-SENDER-USERNAME TO WS-SELECTED-CONN-SENDER
+                           EXIT PERFORM
+                       END-IF
+                   END-IF
+               END-PERFORM
+               CLOSE CONNECTIONS-FILE
+           END-IF
+
+           IF FUNCTION LENGTH(FUNCTION TRIM(WS-SELECTED-CONN-SENDER)) > 0
+               MOVE "1. Accept" TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "1. Accept"
+               MOVE "2. Decline" TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "2. Decline"
+               MOVE WS-CHOICE-PROMPT TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-CHOICE-PROMPT)
+
+               READ INPUT-FILE INTO WS-CONN-ACTION
+                   AT END
+                       MOVE 'Y' TO WS-EOF-FLAG
+                       EXIT PARAGRAPH
+               END-READ
+
+               IF FUNCTION TRIM(WS-CONN-ACTION) = '1'
+                   PERFORM UPDATE-CONNECTION-STATUS-ACCEPT
+                   MOVE "Connection request accepted!" TO OUTPUT-RECORD
+                   COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                   DISPLAY "Connection request accepted!"
+               ELSE IF FUNCTION TRIM(WS-CONN-ACTION) = '2'
+                   PERFORM UPDATE-CONNECTION-STATUS-DECLINE
+                   MOVE "Connection request declined." TO OUTPUT-RECORD
+                   COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                   DISPLAY "Connection request declined."
+               END-IF
+           END-IF.
+
+       UPDATE-CONNECTION-STATUS-ACCEPT.
+           OPEN INPUT CONNECTIONS-FILE
+           OPEN OUTPUT TEMP-CONNECTIONS-FILE
+
+           PERFORM UNTIL 1 = 0
+               READ CONNECTIONS-FILE
+                   AT END
+                       EXIT PERFORM
+               END-READ
+
+               IF FUNCTION TRIM(CONN-SENDER-USERNAME) =
+                  FUNCTION TRIM(WS-SELECTED-CONN-SENDER) AND
+                  FUNCTION TRIM(CONN-RECIPIENT-USERNAME) =
+                  FUNCTION TRIM(WS-USERNAME) AND
+                  FUNCTION TRIM(CONN-STATUS) = "PENDING"
+                   MOVE CONNECTION-RECORD TO TEMP-CONNECTION-RECORD
+                   MOVE "ACCEPTED" TO TEMP-CONN-STATUS
+                   WRITE TEMP-CONNECTION-RECORD
+               ELSE
+                   MOVE CONNECTION-RECORD TO TEMP-CONNECTION-RECORD
+                   WRITE TEMP-CONNECTION-RECORD
+               END-IF
+           END-PERFORM
+
+           CLOSE CONNECTIONS-FILE
+           CLOSE TEMP-CONNECTIONS-FILE
+
+           CALL "SYSTEM" USING "rm connections.dat 2>/dev/null || del connections.dat 2>nul || del connections.dat"
+           CALL "SYSTEM" USING "mv temp-connections.dat connections.dat 2>/dev/null || ren temp-connections.dat connections.dat || ren temp-connections.dat connections.dat".
+
+       UPDATE-CONNECTION-STATUS-DECLINE.
+           OPEN INPUT CONNECTIONS-FILE
+           OPEN OUTPUT TEMP-CONNECTIONS-FILE
+
+           PERFORM UNTIL 1 = 0
+               READ CONNECTIONS-FILE
+                   AT END
+                       EXIT PERFORM
+               END-READ
+
+               IF NOT (FUNCTION TRIM(CONN-SENDER-USERNAME) =
+                       FUNCTION TRIM(WS-SELECTED-CONN-SENDER) AND
+                       FUNCTION TRIM(CONN-RECIPIENT-USERNAME) =
+                       FUNCTION TRIM(WS-USERNAME) AND
+                       FUNCTION TRIM(CONN-STATUS) = "PENDING")
+                   MOVE CONNECTION-RECORD TO TEMP-CONNECTION-RECORD
+                   WRITE TEMP-CONNECTION-RECORD
+               END-IF
+           END-PERFORM
+
+           CLOSE CONNECTIONS-FILE
+           CLOSE TEMP-CONNECTIONS-FILE
+
+           CALL "SYSTEM" USING "rm connections.dat 2>/dev/null || del connections.dat 2>nul || del connections.dat"
+           CALL "SYSTEM" USING "mv temp-connections.dat connections.dat 2>/dev/null || ren temp-connections.dat connections.dat || ren temp-connections.dat connections.dat".
+
+       JOB-SEARCH-MENU.
+           MOVE 'N' TO WS-JOB-EXIT-FLAG
+           PERFORM UNTIL WS-JOB-EXIT-FLAG = 'Y' OR WS-END-OF-FILE
+               MOVE WS-JOB-MENU-HEADER TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-JOB-MENU-HEADER)
+               MOVE WS-JOB-MENU-1 TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-JOB-MENU-1)
+               MOVE WS-JOB-MENU-2 TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-JOB-MENU-2)
+               MOVE WS-JOB-MENU-3 TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-JOB-MENU-3)
+               MOVE WS-JOB-MENU-4 TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-JOB-MENU-4)
+               MOVE WS-CHOICE-PROMPT TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-CHOICE-PROMPT)
+
+               READ INPUT-FILE INTO WS-JOB-CHOICE
+                   AT END
+                       MOVE 'Y' TO WS-EOF-FLAG
+                       EXIT PARAGRAPH
+               END-READ
+
+               EVALUATE FUNCTION TRIM(WS-JOB-CHOICE)
+                   WHEN '1'
+                       PERFORM POST-JOB
+                   WHEN '2'
+                       PERFORM BROWSE-JOBS
+                   WHEN '3'
+                       PERFORM VIEW-MY-APPLICATIONS
+                   WHEN '4'
+                       MOVE 'Y' TO WS-JOB-EXIT-FLAG
+                   WHEN OTHER
+                       MOVE WS-INVALID-CHOICE TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY FUNCTION TRIM(WS-INVALID-CHOICE)
+               END-EVALUATE
+           END-PERFORM.
+
+       POST-JOB.
+           MOVE WS-JOB-TITLE-PROMPT TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-JOB-TITLE-PROMPT)
+           READ INPUT-FILE INTO WS-JOB-TITLE
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+           MOVE WS-JOB-DESC-PROMPT TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-JOB-DESC-PROMPT)
+           READ INPUT-FILE INTO WS-JOB-DESCRIPTION
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+           MOVE WS-JOB-EMPLOYER-PROMPT TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-JOB-EMPLOYER-PROMPT)
+           READ INPUT-FILE INTO WS-JOB-EMPLOYER
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+           MOVE WS-JOB-LOCATION-PROMPT TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-JOB-LOCATION-PROMPT)
+           READ INPUT-FILE INTO WS-JOB-LOCATION
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+           MOVE WS-JOB-SALARY-PROMPT TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-JOB-SALARY-PROMPT)
+           READ INPUT-FILE INTO WS-JOB-SALARY
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           IF FUNCTION UPPER-CASE(FUNCTION TRIM(WS-JOB-SALARY)) = "NONE"
+               MOVE SPACES TO WS-JOB-SALARY
+           END-IF
+
+           PERFORM SAVE-JOB-POSTING
+           MOVE WS-JOB-POSTED-SUCCESS TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-JOB-POSTED-SUCCESS).
+
+       SAVE-JOB-POSTING.
+           PERFORM LOAD-JOB-COUNT
+
+           OPEN EXTEND JOBS-FILE
+           MOVE SPACES TO JOB-RECORD
+           MOVE WS-NEXT-JOB-ID TO JOB-ID
+           MOVE FUNCTION TRIM(WS-JOB-TITLE) TO JOB-TITLE
+           MOVE FUNCTION TRIM(WS-JOB-DESCRIPTION) TO JOB-DESCRIPTION
+           MOVE FUNCTION TRIM(WS-JOB-EMPLOYER) TO JOB-EMPLOYER
+           MOVE FUNCTION TRIM(WS-JOB-LOCATION) TO JOB-LOCATION
+           MOVE FUNCTION TRIM(WS-JOB-SALARY) TO JOB-SALARY
+           MOVE FUNCTION TRIM(WS-USERNAME) TO JOB-POSTER-USERNAME
+           MOVE FUNCTION CURRENT-DATE(1:14) TO JOB-TIMESTAMP(1:14)
+           WRITE JOB-RECORD
+           CLOSE JOBS-FILE
+           ADD 1 TO WS-NEXT-JOB-ID
+           ADD 1 TO WS-JOB-COUNT.
+
+       LOAD-JOB-COUNT.
+           MOVE 0 TO WS-JOB-COUNT
+           MOVE 1 TO WS-NEXT-JOB-ID
+           OPEN INPUT JOBS-FILE
+           IF JOBS-STATUS = "00" OR JOBS-STATUS = "97"
+               PERFORM UNTIL 1 = 0
+                   READ JOBS-FILE
+                       AT END
+                           EXIT PERFORM
+                   END-READ
+                   ADD 1 TO WS-JOB-COUNT
+                   IF JOB-ID >= WS-NEXT-JOB-ID
+                       COMPUTE WS-NEXT-JOB-ID = JOB-ID + 1
+                   END-IF
+               END-PERFORM
+               CLOSE JOBS-FILE
+           END-IF.
+
+       BROWSE-JOBS.
+           PERFORM UNTIL 1 = 0
+               MOVE 0 TO WS-BROWSE-COUNT
+               MOVE "--- Available Job Listings ---" TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "--- Available Job Listings ---"
+
+               OPEN INPUT JOBS-FILE
+               IF JOBS-STATUS = "00" OR JOBS-STATUS = "97"
+                   PERFORM UNTIL 1 = 0
+                       READ JOBS-FILE
+                           AT END
+                               EXIT PERFORM
+                       END-READ
+                       ADD 1 TO WS-BROWSE-COUNT
+                       MOVE WS-BROWSE-COUNT TO WS-DISPLAY-COUNTER
+                       MOVE SPACES TO WS-DISPLAY-MSG
+                       STRING FUNCTION TRIM(WS-DISPLAY-COUNTER)
+                              ". "
+                              FUNCTION TRIM(JOB-TITLE)
+                              " at "
+                              FUNCTION TRIM(JOB-EMPLOYER)
+                              " ("
+                              FUNCTION TRIM(JOB-LOCATION)
+                              ")"
+                              DELIMITED BY SIZE
+                              INTO WS-DISPLAY-MSG
+                       MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+                   END-PERFORM
+                   CLOSE JOBS-FILE
+               END-IF
+
+               MOVE "-----------------------------" TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "-----------------------------"
+               MOVE "Enter job number to view details, or 0 to go back:"
+                   TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "Enter job number to view details, or 0 to go back:"
+
+               READ INPUT-FILE INTO WS-NUM-BUF
+                   AT END
+                       MOVE 'Y' TO WS-EOF-FLAG
+                       EXIT PARAGRAPH
+               END-READ
+
+               IF FUNCTION TEST-NUMVAL(WS-NUM-BUF) = 0
+                   COMPUTE WS-SELECT-INDEX =
+                       FUNCTION NUMVAL(FUNCTION TRIM(WS-NUM-BUF))
+                   IF WS-SELECT-INDEX = 0
+                       EXIT PARAGRAPH
+                   END-IF
+                   IF WS-SELECT-INDEX > 0 AND
+                      WS-SELECT-INDEX <= WS-BROWSE-COUNT
+                       PERFORM SHOW-JOB-DETAILS
+                   ELSE
+                       MOVE "Invalid job number!" TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY "Invalid job number!"
+                   END-IF
+               ELSE
+                   MOVE "Invalid input!" TO OUTPUT-RECORD
+                   COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                   DISPLAY "Invalid input!"
+               END-IF
+           END-PERFORM.
+
+       SHOW-JOB-DETAILS.
+           MOVE 0 TO WS-INDEX
+           MOVE 'N' TO WS-JOB-FOUND
+           OPEN INPUT JOBS-FILE
+           PERFORM UNTIL 1 = 0
+               READ JOBS-FILE
+                   AT END
+                       EXIT PERFORM
+               END-READ
+               ADD 1 TO WS-INDEX
+               IF WS-INDEX = WS-SELECT-INDEX
+                   MOVE 'Y' TO WS-JOB-FOUND
+                   MOVE JOB-ID TO WS-DETAIL-JOB-ID
+                   MOVE JOB-TITLE TO WS-DETAIL-TITLE
+                   MOVE JOB-DESCRIPTION TO WS-DETAIL-DESC
+                   MOVE JOB-EMPLOYER TO WS-DETAIL-EMPLOYER
+                   MOVE JOB-LOCATION TO WS-DETAIL-LOCATION
+                   MOVE JOB-SALARY TO WS-DETAIL-SALARY
+                   EXIT PERFORM
+               END-IF
+           END-PERFORM
+           CLOSE JOBS-FILE
+
+           IF WS-JOB-FOUND = 'Y'
+               MOVE "--- Job Details ---" TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "--- Job Details ---"
+
+               MOVE SPACES TO WS-DISPLAY-MSG
+               STRING "Title: "
+                      FUNCTION TRIM(WS-DETAIL-TITLE)
+                      DELIMITED BY SIZE
+                      INTO WS-DISPLAY-MSG
+               MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+
+               MOVE SPACES TO WS-DISPLAY-MSG
+               STRING "Description: "
+                      FUNCTION TRIM(WS-DETAIL-DESC)
+                      DELIMITED BY SIZE
+                      INTO WS-DISPLAY-MSG
+               MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+
+               MOVE SPACES TO WS-DISPLAY-MSG
+               STRING "Employer: "
+                      FUNCTION TRIM(WS-DETAIL-EMPLOYER)
+                      DELIMITED BY SIZE
+                      INTO WS-DISPLAY-MSG
+               MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+
+               MOVE SPACES TO WS-DISPLAY-MSG
+               STRING "Location: "
+                      FUNCTION TRIM(WS-DETAIL-LOCATION)
+                      DELIMITED BY SIZE
+                      INTO WS-DISPLAY-MSG
+               MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+
+               IF FUNCTION LENGTH(FUNCTION TRIM(WS-DETAIL-SALARY)) > 0
+                   MOVE SPACES TO WS-DISPLAY-MSG
+                   STRING "Salary: "
+                          FUNCTION TRIM(WS-DETAIL-SALARY)
+                          DELIMITED BY SIZE
+                          INTO WS-DISPLAY-MSG
+                   MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+                   COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                   DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+               END-IF
+
+               MOVE "-------------------" TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "-------------------"
+               MOVE "1. Apply for this Job" TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "1. Apply for this Job"
+               MOVE "2. Back to Job List" TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "2. Back to Job List"
+               MOVE WS-CHOICE-PROMPT TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-CHOICE-PROMPT)
+
+               READ INPUT-FILE INTO WS-JOB-CHOICE
+                   AT END
+                       MOVE 'Y' TO WS-EOF-FLAG
+                       EXIT PARAGRAPH
+               END-READ
+
+               EVALUATE FUNCTION TRIM(WS-JOB-CHOICE)
+                   WHEN '1'
+                       PERFORM APPLY-FOR-JOB
+                   WHEN '2'
+                       CONTINUE
+                   WHEN OTHER
+                       MOVE WS-INVALID-CHOICE TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY FUNCTION TRIM(WS-INVALID-CHOICE)
+               END-EVALUATE
+           END-IF.
+
+       APPLY-FOR-JOB.
+           OPEN EXTEND APPLICATIONS-FILE
+           MOVE SPACES TO APPLICATION-RECORD
+           MOVE WS-USERNAME TO APP-USERNAME
+           MOVE WS-DETAIL-JOB-ID TO APP-JOB-ID
+           MOVE FUNCTION TRIM(WS-DETAIL-TITLE) TO APP-JOB-TITLE
+           MOVE FUNCTION TRIM(WS-DETAIL-EMPLOYER) TO APP-JOB-EMPLOYER
+           MOVE FUNCTION TRIM(WS-DETAIL-LOCATION) TO APP-JOB-LOCATION
+           MOVE FUNCTION CURRENT-DATE(1:14) TO APP-TIMESTAMP(1:14)
+           WRITE APPLICATION-RECORD
+           CLOSE APPLICATIONS-FILE
+           MOVE SPACES TO OUTPUT-RECORD
+           STRING "Your application for "
+                  FUNCTION TRIM(WS-DETAIL-TITLE)
+                  " at "
+                  FUNCTION TRIM(WS-DETAIL-EMPLOYER)
+                  " has been submitted."
+                  DELIMITED BY SIZE
+                  INTO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "Your application for " FUNCTION TRIM(WS-DETAIL-TITLE)
+                   " at " FUNCTION TRIM(WS-DETAIL-EMPLOYER)
+                   " has been submitted.".
+
+       VIEW-MY-APPLICATIONS.
+           MOVE "--- Your Job Applications ---" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "--- Your Job Applications ---"
+           MOVE SPACES TO WS-DISPLAY-MSG
+           STRING "Application Summary for "
+                  FUNCTION TRIM(WS-USERNAME)
+                  DELIMITED BY SIZE
+                  INTO WS-DISPLAY-MSG
+           MOVE FUNCTION TRIM(WS-DISPLAY-MSG) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+           MOVE "------------------------------" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "------------------------------"
+
+           MOVE 0 TO WS-APP-COUNT
+           OPEN INPUT APPLICATIONS-FILE
+           IF APPLICATIONS-STATUS = "00" OR APPLICATIONS-STATUS = "97"
+               PERFORM UNTIL 1 = 0
+                   READ APPLICATIONS-FILE
+                       AT END
+                           EXIT PERFORM
+                   END-READ
+                   IF FUNCTION TRIM(APP-USERNAME) =
+                      FUNCTION TRIM(WS-USERNAME)
+                       ADD 1 TO WS-APP-COUNT
+                       MOVE SPACES TO WS-DISPLAY-MSG
+                       STRING "Job Title: "
+                              FUNCTION TRIM(APP-JOB-TITLE)
+                              DELIMITED BY SIZE
+                              INTO WS-DISPLAY-MSG
+                       MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+
+                       MOVE SPACES TO WS-DISPLAY-MSG
+                       STRING "Employer: "
+                              FUNCTION TRIM(APP-JOB-EMPLOYER)
+                              DELIMITED BY SIZE
+                              INTO WS-DISPLAY-MSG
+                       MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+
+                       MOVE SPACES TO WS-DISPLAY-MSG
+                       STRING "Location: "
+                              FUNCTION TRIM(APP-JOB-LOCATION)
+                              DELIMITED BY SIZE
+                              INTO WS-DISPLAY-MSG
+                       MOVE WS-DISPLAY-MSG TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+
+                       MOVE "------------------------------"
+                           TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY "------------------------------"
+                   END-IF
+               END-PERFORM
+               CLOSE APPLICATIONS-FILE
+           END-IF
+
+           MOVE WS-APP-COUNT TO WS-DISPLAY-COUNTER
+           MOVE SPACES TO WS-DISPLAY-MSG
+           STRING "Total Applications: "
+                  FUNCTION TRIM(WS-DISPLAY-COUNTER)
+                  DELIMITED BY SIZE
+                  INTO WS-DISPLAY-MSG
+           MOVE FUNCTION TRIM(WS-DISPLAY-MSG) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+           MOVE "------------------------------" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "------------------------------".
+
+       MESSAGES-MENU.
+           MOVE 'N' TO WS-MSG-EXIT-FLAG
+           PERFORM UNTIL WS-MSG-EXIT-FLAG = 'Y' OR WS-END-OF-FILE
+               MOVE WS-MSG-MENU-HEADER TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-MSG-MENU-HEADER)
+               MOVE WS-MSG-MENU-1 TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-MSG-MENU-1)
+               MOVE WS-MSG-MENU-2 TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-MSG-MENU-2)
+               MOVE WS-MSG-MENU-3 TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-MSG-MENU-3)
+               MOVE WS-CHOICE-PROMPT TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY FUNCTION TRIM(WS-CHOICE-PROMPT)
+
+               READ INPUT-FILE INTO WS-MSG-CHOICE
+                   AT END
+                       MOVE 'Y' TO WS-EOF-FLAG
+                       EXIT PARAGRAPH
+               END-READ
+
+               EVALUATE FUNCTION TRIM(WS-MSG-CHOICE)
+                   WHEN '1'
+                       PERFORM SEND-MESSAGE-PROCESS
+                   WHEN '2'
+                       PERFORM VIEW-MY-MESSAGES
+                   WHEN '3'
+                       MOVE 'Y' TO WS-MSG-EXIT-FLAG
+                   WHEN OTHER
+                       MOVE WS-INVALID-CHOICE TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY FUNCTION TRIM(WS-INVALID-CHOICE)
+               END-EVALUATE
+           END-PERFORM.
+
+       SEND-MESSAGE-PROCESS.
+           MOVE "Enter recipient's username (must be a connection):"
+             TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "Enter recipient's username (must be a connection):"
+           READ INPUT-FILE INTO WS-MSG-RECIPIENT
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+           MOVE FUNCTION TRIM(WS-MSG-RECIPIENT)
+              TO WS-MSG-RECIPIENT
+
+           MOVE WS-MSG-RECIPIENT TO WS-TARGET-USERNAME
+           PERFORM CHECK-USER-EXISTS
+           IF WS-ACCOUNT-EXISTS = 'N'
+               MOVE "User not found!" TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "User not found!"
+               EXIT PARAGRAPH
+           END-IF
+
+           PERFORM CHECK-IF-CONNECTED
+           IF WS-IS-CONNECTED = 'N'
+               MOVE "You can only send messages to users you are connected with!"
+                 TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY
+                 "You can only send messages to users you are connected with!"
+               EXIT PARAGRAPH
+           END-IF
+
+           MOVE "Enter your message (max 200 chars):"
+             TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "Enter your message (max 200 chars):"
+           READ INPUT-FILE INTO WS-LONG-MSG
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           COMPUTE WS-LEN =
+               FUNCTION LENGTH(FUNCTION TRIM(WS-LONG-MSG))
+
+           IF WS-LEN > 200
+               MOVE "Error: Message exceeds 200 characters. Please shorten your message."
+                 TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY
+                 "Error: Message exceeds 200 characters. Please shorten your message."
+               EXIT PARAGRAPH
+           END-IF
+
+           MOVE WS-LONG-MSG TO WS-MSG-CONTENT
+
+           PERFORM SAVE-MESSAGE
+           STRING "Message sent to "
+                   FUNCTION TRIM(WS-MSG-RECIPIENT)
+                   " successfully!"
+                   DELIMITED BY SIZE
+                   INTO WS-DISPLAY-MSG
+           MOVE FUNCTION TRIM(WS-DISPLAY-MSG) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG).
+
+       SAVE-MESSAGE.
+           OPEN EXTEND MESSAGES-FILE
+           MOVE SPACES TO MESSAGE-RECORD
+           MOVE FUNCTION TRIM(WS-USERNAME) TO MSG-SENDER-USERNAME
+           MOVE FUNCTION TRIM(WS-MSG-RECIPIENT)
+               TO MSG-RECIPIENT-USERNAME
+           MOVE WS-MSG-CONTENT TO MSG-CONTENT
+           MOVE FUNCTION CURRENT-DATE(1:14) TO MSG-TIMESTAMP(1:14)
+           WRITE MESSAGE-RECORD
+           CLOSE MESSAGES-FILE.
+
+       CHECK-IF-CONNECTED.
+           MOVE 'N' TO WS-IS-CONNECTED
+           OPEN INPUT CONNECTIONS-FILE
+           IF CONNECTIONS-STATUS = "00" OR CONNECTIONS-STATUS = "97"
+               PERFORM UNTIL WS-IS-CONNECTED = 'Y'
+                   READ CONNECTIONS-FILE
+                       AT END
+                           EXIT PERFORM
+                   END-READ
+                   IF FUNCTION TRIM(CONN-STATUS) = "ACCEPTED"
+                       IF (FUNCTION TRIM(CONN-SENDER-USERNAME) =
+                           FUNCTION TRIM(WS-USERNAME) AND
+                           FUNCTION TRIM(CONN-RECIPIENT-USERNAME) =
+                           FUNCTION TRIM(WS-TARGET-USERNAME)) OR
+                          (FUNCTION TRIM(CONN-SENDER-USERNAME) =
+                           FUNCTION TRIM(WS-TARGET-USERNAME) AND
+                           FUNCTION TRIM(CONN-RECIPIENT-USERNAME) =
+                           FUNCTION TRIM(WS-USERNAME))
+                           MOVE 'Y' TO WS-IS-CONNECTED
+                       END-IF
+                   END-IF
+               END-PERFORM
+               CLOSE CONNECTIONS-FILE
+           END-IF.
+
+       VIEW-MY-MESSAGES.
+           MOVE "--- Your Messages ---" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "--- Your Messages ---"
+
+           MOVE 0 TO WS-MSG-COUNT
+           OPEN INPUT MESSAGES-FILE
+           IF MESSAGES-STATUS = "00" OR MESSAGES-STATUS = "97"
+               PERFORM UNTIL 1 = 0
+                   READ MESSAGES-FILE
+                       AT END
+                           EXIT PERFORM
+                   END-READ
+                   IF FUNCTION TRIM(MSG-RECIPIENT-USERNAME) =
+                      FUNCTION TRIM(WS-USERNAME)
+                       ADD 1 TO WS-MSG-COUNT
+                       MOVE SPACES TO WS-DISPLAY-MSG
+                       STRING "From: "
+                              FUNCTION TRIM(MSG-SENDER-USERNAME)
+                              DELIMITED BY SIZE
+                              INTO WS-DISPLAY-MSG
+                       MOVE FUNCTION TRIM(WS-DISPLAY-MSG) TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+
+                       MOVE SPACES TO WS-DISPLAY-MSG
+                       STRING "Message: "
+                              FUNCTION TRIM(MSG-CONTENT)
+                              DELIMITED BY SIZE
+                              INTO WS-DISPLAY-MSG
+                       MOVE FUNCTION TRIM(WS-DISPLAY-MSG) TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG)
+
+                       MOVE "---" TO OUTPUT-RECORD
+                       COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                       DISPLAY "---"
+                   END-IF
+               END-PERFORM
+               CLOSE MESSAGES-FILE
+           END-IF
+
+           IF WS-MSG-COUNT = 0
+               MOVE "No messages received." TO OUTPUT-RECORD
+               COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+               DISPLAY "No messages received."
+           END-IF
+
+           MOVE "---------------------" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "---------------------"
+           MOVE "1. Send a New Message" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "1. Send a New Message"
+           MOVE "2. View My Messages" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "2. View My Messages"
+           MOVE "3. Back to Main Menu" TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY "3. Back to Main Menu"
+           MOVE FUNCTION TRIM(WS-CHOICE-PROMPT) TO OUTPUT-RECORD
+           COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+           DISPLAY FUNCTION TRIM(WS-CHOICE-PROMPT)
+
+           READ INPUT-FILE INTO WS-MSG-CHOICE
+               AT END
+                   MOVE 'Y' TO WS-EOF-FLAG
+                   EXIT PARAGRAPH
+           END-READ
+
+           EVALUATE FUNCTION TRIM(WS-MSG-CHOICE)
+               WHEN '1'
+                   PERFORM SEND-MESSAGE-PROCESS
+               WHEN '2'
+                   PERFORM VIEW-MY-MESSAGES
+               WHEN '3'
+                   MOVE 'Y' TO WS-MSG-EXIT-FLAG
+               WHEN OTHER
+                   MOVE WS-INVALID-CHOICE TO OUTPUT-RECORD
+                   COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
+           WRITE OUTPUT-RECORD
+                   DISPLAY FUNCTION TRIM(WS-INVALID-CHOICE)
+           END-EVALUATE.
+
+       FORMAT-MESSAGE-TIMESTAMP.
+           MOVE SPACES TO WS-FORMATTED-TIMESTAMP
+           IF FUNCTION LENGTH(FUNCTION TRIM(MSG-TIMESTAMP)) >= 14
+               STRING MSG-TIMESTAMP(1:4) "-" MSG-TIMESTAMP(5:2)
+                      "-" MSG-TIMESTAMP(7:2)
+                      " " MSG-TIMESTAMP(9:2)
+                      ":" MSG-TIMESTAMP(11:2)
+                      DELIMITED BY SIZE
+                      INTO WS-FORMATTED-TIMESTAMP
+           ELSE
+               MOVE FUNCTION TRIM(MSG-TIMESTAMP)
+                 TO WS-FORMATTED-TIMESTAMP
+           END-IF.
+
+       FORMAT-TIMESTAMP.
+           MOVE SPACES TO WS-FORMATTED-TIMESTAMP
+           IF FUNCTION LENGTH(FUNCTION TRIM(MSG-TIMESTAMP)) >= 14
+               IF MSG-TIMESTAMP(9:1) = ":"
+                   STRING MSG-TIMESTAMP(1:4) "-" MSG-TIMESTAMP(5:2)
+                          "-" MSG-TIMESTAMP(7:2)
+                          " " MSG-TIMESTAMP(10:2)
+                          ":" MSG-TIMESTAMP(13:2)
+                          DELIMITED BY SIZE
+                          INTO WS-FORMATTED-TIMESTAMP
+               ELSE
+                   STRING MSG-TIMESTAMP(1:4) "-" MSG-TIMESTAMP(5:2)
+                          "-" MSG-TIMESTAMP(7:2)
+                          " " MSG-TIMESTAMP(9:2)
+                          ":" MSG-TIMESTAMP(11:2)
+                          DELIMITED BY SIZE
+                          INTO WS-FORMATTED-TIMESTAMP
+               END-IF
+           ELSE
+               MOVE FUNCTION TRIM(MSG-TIMESTAMP)
+                 TO WS-FORMATTED-TIMESTAMP
+           END-IF.
+
+       CLEANUP.
+           CLOSE INPUT-FILE
+           CLOSE OUTPUT-FILE
+           CLOSE ACCOUNTS-FILE
+           CLOSE PROFILES-FILE
+           CLOSE TEMP-PROFILES-FILE
+           CLOSE CONNECTIONS-FILE
+           CLOSE TEMP-CONNECTIONS-FILE
+           CLOSE JOBS-FILE
+           CLOSE TEMP-JOBS-FILE
+           CLOSE APPLICATIONS-FILE
+           CLOSE MESSAGES-FILE.
+       END PROGRAM INCOLLEGE.
