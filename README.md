@@ -1,45 +1,93 @@
-# InCollege - Professional Networking Platform
+# InCollege
 
 ## Overview
 
-InCollege is a COBOL-based professional networking application that enables students and professionals to connect through job postings, messaging, and profile management. The system implements authentication, user profiles, professional connections, job search capabilities, and an integrated messaging system.
+InCollege is a comprehensive COBOL-based professional networking application developed across 10 epics. It provides a complete social networking system for students and professionals, featuring user authentication, profile management, professional connections, job search, and messaging capabilities.
 
 ## Table of Contents
 
-1. [Installation & Setup](#installation--setup)
-2. [Running the Application](#running-the-application)
-3. [Input File Preparation](#input-file-preparation)
-4. [Output File Interpretation](#output-file-interpretation)
-5. [Data Files Specification](#data-files-specification)
-6. [Testing](#testing)
-7. [Troubleshooting](#troubleshooting)
+1. [Features](#features)
+2. [Installation & Setup](#installation--setup)
+3. [Running the Application](#running-the-application)
+4. [Preparing Input Files](#preparing-input-files)
+5. [Interpreting Output Files](#interpreting-output-files)
+6. [Data Files](#data-files)
+7. [Testing](#testing)
+8. [Troubleshooting](#troubleshooting)
+
+---
+
+## Features
+
+### Epic 1-3: Authentication & Account Management
+- User login and account creation
+- Password validation (8-12 characters, 1 uppercase, 1 digit, 1 special character)
+- Maximum 5 accounts per system
+- Username uniqueness enforcement
+
+### Epic 4-6: Profile Management
+- Create and edit user profiles (name, university, major, graduation year, about section)
+- Add up to 3 work experiences (title, company, dates, description)
+- Add up to 3 education entries (degree, university, years)
+- View own profile and search for other users
+- Profile information displayed with experience and education sections
+
+### Epic 7: Professional Networking
+- Send connection requests to other users with optional messages
+- View pending connection requests
+- Accept or decline connection requests
+- View connected users in your network
+- Bidirectional connection relationships
+
+### Epic 8-9: Job Search & Applications
+- Post job/internship opportunities with full details
+- Browse available job listings
+- View detailed job information (title, description, employer, location, salary)
+- Apply for jobs/internships
+- View application history and track total applications
+- Jobs identified by unique auto-incremented IDs
+
+### Epic 10: Messaging System
+- Send messages to connected users (200 character limit)
+- View received messages from connections
+- Message validation (user existence, connection status, length)
+- Messages stored with timestamps
+
+### Additional Features
+- Learn a New Skill module (Programming, Communication, Data Analysis, Leadership)
+- Cross-platform compatibility (macOS, Linux, Windows)
+- Persistent data storage in fixed-width format files
+- Comprehensive input validation and error handling
 
 ---
 
 ## Installation & Setup
 
+### Requirements
+- GNU COBOL 3.0 or higher
+- Unix-like environment (macOS, Linux) or Windows with COBOL support
+- Docker (optional)
+
 ### Compilation
 
 ```bash
-# Install GNU COBOL (if not already installed)
-brew install gnu-cobol  # macOS
-# or
-sudo apt-get install gnucobol  # Ubuntu/Debian
+# Install GNU COBOL
+brew install gnu-cobol              # macOS
+sudo apt-get install gnucobol       # Ubuntu/Debian
 
-# Compile the application
+# Compile
 cobc -x InCollege.cob -o InCollege
 
 # Initialize data files
 touch accounts.dat profiles.dat connections.dat jobs.dat applications.dat messages.dat
 ```
 
-### Docker (Optional)
+### Docker Deployment (Optional)
 
 ```bash
-# Build
 docker build -t cobol-app .
 
-# Run (macOS/Linux)
+# Run
 docker run --rm -v "$(pwd):/data" \
   -e COB_FILE_PATH="/data" \
   -e INCOLLEGE_INPUT_TXT="/data/InCollege-Input.txt" \
@@ -52,401 +100,311 @@ docker run --rm -v "$(pwd):/data" \
 ## Running the Application
 
 ```bash
-# Standard execution
+# Execute
 ./InCollege < InCollege-Input.txt
-
-# Before running tests, clear applications.dat
-rm -f applications.dat && touch applications.dat
 
 # View output
 cat InCollege-Output.txt
 ```
 
-The application reads input from `InCollege-Input.txt` and writes output to both the console and `InCollege-Output.txt`.
+**Important:** Before running tests, clear `applications.dat`:
+```bash
+rm -f applications.dat && touch applications.dat
+```
 
 ---
 
-## Input File Preparation
+## Preparing Input Files
 
 ### Input File Structure
 
-Each line in `InCollege-Input.txt` represents one user input. Lines must appear in the exact order the application prompts for them.
+`InCollege-Input.txt` contains one input per line in the exact order the application prompts for them. Each line represents a single user response.
 
-### Menu Reference
+### Menu Navigation Reference
 
-**Login Menu:** 1=Log In, 2=Create Account
+| Menu | Options |
+|------|---------|
+| **Login** | 1=Log In, 2=Create Account |
+| **Main** | 1=Create/Edit Profile, 2=View Profile, 3=Search User, 4=Learn Skill, 5=Pending Connections, 6=View Network, 7=Job Search, 8=Messages, 9=Exit |
+| **Job Search** | 1=Post Job, 2=Browse Jobs, 3=View Applications, 4=Back |
+| **Messages** | 1=Send Message, 2=View Messages, 3=Back |
 
-**Main Menu:** 1=Create/Edit Profile, 2=View Profile, 3=Search User, 4=Learn Skill, 5=Pending Connections, 6=View Network, 7=Job Search, 8=Messages, 9=Exit
+### Input Preparation by Functionality
 
-**Job Menu:** 1=Post Job, 2=Browse Jobs, 3=View Applications, 4=Back
+#### Authentication (Epic 1-3)
 
-**Messages Menu:** 1=Send Message, 2=View Messages, 3=Back
+**Login:**
+- Line 1: `1` (Log In)
+- Line 2: Username (20 char max)
+- Line 3: Password (8-12 chars)
 
-### Input Examples by Functionality
+**Create Account:**
+- Line 1: `2` (Create Account)
+- Line 2: Username (must be unique)
+- Line 3: Password (requirements: 8-12 chars, 1 uppercase, 1 digit, 1 special char: !@#$%^&*())
 
-#### 1. Login and Exit
-```
-1
-AdminUser
-Pass123!
-9
-```
-Line 1: Choose Log In | Line 2: Username | Line 3: Password | Line 4: Exit
+#### Profile Management (Epic 4-6)
 
-#### 2. Create Account
-```
-2
-NewUser
-SecureP@ss1
-```
-**Password Requirements:** 8-12 characters, 1 uppercase, 1 digit, 1 special character (!@#$%^&*())
+**Create/Edit Profile:**
+- Choose option `1` from Main Menu
+- Enter: First Name (50 char max)
+- Enter: Last Name (50 char max)
+- Enter: University (100 char max)
+- Enter: Major (50 char max)
+- Enter: Graduation Year (4 digits, 1900-2100)
+- Enter: About (200 char max)
 
-#### 3. Create/Edit Profile
-```
-1
-AdminUser
-Pass123!
-1
-John
-Doe
-University of South Florida
-Computer Science
-2025
-Passionate about software development
-9
-```
-After login: Choose Create/Edit Profile → Enter: First Name, Last Name, University, Major, Year (1900-2100), About (max 200 chars)
+**View Profile:**
+- Choose option `2` from Main Menu (displays your profile)
 
-#### 4. Search User and Send Connection Request
-```
-1
-AdminUser
-Pass123!
-3
-ProfSmith
-1
-Looking forward to connecting!
-9
-```
-After login: Search User → Enter username → Send Request → Enter optional message (max 200 chars)
+**Search User:**
+- Choose option `3` from Main Menu
+- Enter: Username to search
+- If found, option to send connection request appears
 
-#### 5. Accept/Decline Connection Request
-```
-1
-ProfSmith
-Pass123!
-5
-1
-1
-9
-```
-View Pending Connections → Select request number → 1=Accept, 2=Decline
+#### Networking (Epic 7)
 
-#### 6. Post a Job
-```
-1
-AdminUser
-Pass123!
-7
-1
-Software Engineer Intern
-Develop web applications
-TechCorp Inc
-Tampa, FL
-$25/hour
-7
-4
-9
-```
-Job Menu → Post Job → Enter: Title (max 100), Description (max 200), Employer (max 100), Location (max 100), Salary (max 50, or "none")
+**Send Connection Request:**
+- Search for user (option `3`)
+- Choose `1` to send request
+- Enter: Optional message (200 char max)
 
-#### 7. Browse Jobs and Apply
-```
-1
-AdminUser
-Pass123!
-7
-2
-1
-1
-0
-3
-4
-9
-```
-Job Menu → Browse → Select job number → Apply (1) or Back (2) → Enter 0 to return to Job Menu → View Applications
+**View Pending Requests:**
+- Choose option `5` from Main Menu
+- Lists all pending requests with numbers
+- Enter: Request number to accept/decline, or `0` to go back
+- Choose: `1` to Accept, `2` to Decline
 
-#### 8. Send Message
-```
-1
-AdminUser
-Pass123!
-8
-1
-ProfSmith
-Thank you for your message!
-3
-9
-```
-Messages Menu → Send Message → Recipient username → Message content (max 200 chars)
-**Note:** You must be connected (ACCEPTED status) with the recipient.
+**View Network:**
+- Choose option `6` from Main Menu
+- Displays all accepted connections
 
-#### 9. View Messages
-```
-1
-AdminUser
-Pass123!
-8
-2
-3
-9
-```
-Messages Menu → View Messages → Back to Main Menu
+#### Job Search (Epic 8-9)
+
+**Post Job:**
+- Choose option `7` from Main Menu (Job Search)
+- Choose `1` (Post Job)
+- Enter: Job Title (100 char max)
+- Enter: Description (200 char max)
+- Enter: Employer (100 char max)
+- Enter: Location (100 char max)
+- Enter: Salary (50 char max, or "none")
+
+**Browse and Apply:**
+- Choose option `7` from Main Menu
+- Choose `2` (Browse Jobs)
+- Enter: Job number to view details, or `0` to return
+- When viewing job details:
+  - Choose `1` to Apply
+  - Choose `2` to go Back to Job List
+- After applying, returns to job listings
+- Enter `0` to exit browsing
+
+**View Applications:**
+- Choose option `7` from Main Menu
+- Choose `3` (View Applications)
+- Displays all jobs you've applied for with total count
+
+#### Messaging (Epic 10)
+
+**Send Message:**
+- Choose option `8` from Main Menu (Messages)
+- Choose `1` (Send Message)
+- Enter: Recipient username (must be connected)
+- Enter: Message content (200 char max)
+
+**View Messages:**
+- Choose option `8` from Main Menu
+- Choose `2` (View Messages)
+- Displays all received messages
+
+#### Learn Skills
+
+**Access Skills:**
+- Choose option `4` from Main Menu
+- Choose: `1`=Programming, `2`=Communication, `3`=Data Analysis, `4`=Leadership, `5`=Back
+
+### Input File Best Practices
+
+- One input per line, no blank lines mid-sequence
+- Ensure trailing newline at end of file
+- Use Unix line endings (LF, not CRLF)
+- Respect character limits for each field
+- Input must match prompt sequence exactly
 
 ---
 
-## Output File Interpretation
+## Interpreting Output Files
 
-### Success Indicators
+Output is written to both console and `InCollege-Output.txt`. Below are the key indicators for each functionality.
 
-**Login Success:**
-```
-You have successfully logged in.
-Welcome, AdminUser!
-```
+### Success Messages
 
-**Account Created:**
-```
-Account created successfully!
-Welcome, NewUser!
-```
-
-**Profile Saved:**
-```
-Profile saved successfully!
-```
-
-**Connection Request Sent:**
-```
-Connection request sent!
-```
-
-**Connection Accepted:**
-```
-Connection request accepted!
-```
-
-**Job Posted:**
-```
-Job posted successfully!
-```
-
-**Job Application:**
-```
-Your application for [Title] at [Employer] has been submitted.
-```
-
-**Message Sent:**
-```
-Message sent to [Username] successfully!
-```
+| Operation | Success Indicator |
+|-----------|-------------------|
+| Login | `You have successfully logged in.` followed by `Welcome, [Username]!` |
+| Account Creation | `Account created successfully!` followed by `Welcome, [Username]!` |
+| Profile Saved | `Profile saved successfully!` |
+| Connection Request Sent | `Connection request sent!` |
+| Connection Accepted | `Connection request accepted!` |
+| Connection Declined | `Connection request declined.` |
+| Job Posted | `Job posted successfully!` |
+| Job Application | `Your application for [Title] at [Employer] has been submitted.` |
+| Message Sent | `Message sent to [Username] successfully!` |
 
 ### Error Messages
 
-**Invalid Login:**
-```
-Invalid username or password!
-```
+| Error Type | Error Message |
+|------------|---------------|
+| Invalid Login | `Invalid username or password!` |
+| Password Invalid | `Password must be 8-12 characters, at least one uppercase letter, one digit, one special character` |
+| Username Exists | `Username already exists!` |
+| Max Accounts | `Maximum of 5 accounts reached!` |
+| Profile Not Found | `Profile not found!` |
+| Invalid Year | `Invalid graduation year!` |
+| User Not Found | `User not found!` |
+| Not Connected | `You can only send messages to users you are connected with!` |
+| Message Too Long | `Error: Message exceeds 200 characters. Please shorten your message.` |
+| Invalid Job Number | `Invalid job number!` |
+| Already Connected | `You are already connected or have a pending request with this user.` |
+| Invalid Input | `Invalid input!` or `Invalid choice. Try again.` |
 
-**Password Validation Failed:**
-```
-Password must be 8-12 characters, at least one uppercase letter, one digit, one special character
-```
-
-**Username Exists:**
-```
-Username already exists!
-```
-
-**Maximum Accounts:**
-```
-Maximum of 5 accounts reached!
-```
-
-**User Not Found:**
-```
-User not found!
-```
-
-**Not Connected (for messaging):**
-```
-You can only send messages to users you are connected with!
-```
-
-**Message Too Long:**
-```
-Error: Message exceeds 200 characters. Please shorten your message.
-```
-
-**Invalid Job Number:**
-```
-Invalid job number!
-```
-
-**Already Connected:**
-```
-You are already connected or have a pending request with this user.
-```
-
-### Data Display Formats
+### Output Data Formats
 
 **Profile Display:**
 ```
 --- Profile ---
-Name: John Doe
-University: University of South Florida
-Major: Computer Science
-Graduation Year: 2025
-About: Passionate about software development
+Name: [First] [Last]
+University: [University]
+Major: [Major]
+Graduation Year: [Year]
+About: [About text]
+Experience:
+  Title: [Title]
+  Company: [Company]
+  Dates: [Dates]
+  Description: [Description]
+Education:
+  Degree: [Degree]
+  University: [University]
+  Years: [Years]
 -------------------
 ```
 
 **Job Listings:**
 ```
 --- Available Job Listings ---
-1. Software Engineer at TechCorp Inc (Tampa, FL)
-2. UX Designer at CreativeStudio (Remote)
+1. [Title] at [Employer] ([Location])
+2. [Title] at [Employer] ([Location])
 -----------------------------
 ```
 
 **Job Details:**
 ```
 --- Job Details ---
-Title: Software Engineer
-Description: Develop and maintain applications
-Employer: TechCorp Inc
-Location: Tampa, FL
-Salary: $85,000/year
+Title: [Job Title]
+Description: [Description]
+Employer: [Employer]
+Location: [Location]
+Salary: [Salary]
 -------------------
 ```
 
-**Job Applications Summary:**
+**Application Summary:**
 ```
 --- Your Job Applications ---
-Application Summary for AdminUser
+Application Summary for [Username]
 ------------------------------
-Job Title: Software Engineer
-Employer: TechCorp Inc
-Location: Tampa, FL
+Job Title: [Title]
+Employer: [Employer]
+Location: [Location]
 ------------------------------
-Total Applications: 2
+Total Applications: [Count]
 ------------------------------
 ```
 
 **Messages Display:**
 ```
 --- Your Messages ---
-From: ProfSmith
-Message: Great work on the project!
+From: [Username]
+Message: [Content]
 ---
-From: FriendA
-Message: Did you see the new internship posting?
+From: [Username]
+Message: [Content]
 ---
 ---------------------
 ```
+Note: Timestamps are stored but not displayed in message view.
 
 **Network Display:**
 ```
 --- My Network ---
-Connected with: ProfSmith
-Connected with: FriendA
+Connected with: [Username]
+Connected with: [Username]
 ------------------
 ```
 
 **Pending Connections:**
 ```
 --- Pending Connection Requests ---
-1. From: AdminUser
-   Message: Looking forward to connecting!
-2. From: JohnDoe
+1. From: [Username]
+   Message: [Optional message]
+2. From: [Username]
 Enter request number to accept/decline (or 0 to go back):
 ```
 
+**Empty States:**
+- No messages: `No messages received.`
+- No applications: `Total Applications: 0`
+- No pending requests: `No pending connection requests.`
+- No connections: Empty list under `--- My Network ---`
+
 ---
 
-## Data Files Specification
+## Data Files
 
 All data files use fixed-width record formats with space padding.
 
-### accounts.dat (34 bytes/record)
-```
-Format: [Username: 20][Password: 12][Length: 2]
-Example: AdminUser           Pass123!    08
-```
+### File Specifications
 
-### profiles.dat (~2420 bytes/record)
-```
-Format: [Username: 20][FirstName: 50][LastName: 50][University: 100][Major: 50]
-        [Year: 4][About: 200][ExpCount: 1][3x Experience: 450 each]
-        [EduCount: 1][3x Education: 250 each]
-```
-Experience: Title(100), Company(100), Dates(50), Description(200)
-Education: Degree(100), University(100), Years(50)
+| File | Record Size | Format |
+|------|-------------|--------|
+| **accounts.dat** | 34 bytes | `[Username:20][Password:12][Length:2]` |
+| **profiles.dat** | ~2420 bytes | `[Username:20][FirstName:50][LastName:50][University:100][Major:50][Year:4][About:200][ExpCount:1][3×Experience:450][EduCount:1][3×Education:250]` |
+| **connections.dat** | 269 bytes | `[Sender:20][Recipient:20][Status:10][Message:200][Timestamp:19]` |
+| **jobs.dat** | 595 bytes | `[JobID:6][Title:100][Description:200][Employer:100][Location:100][Salary:50][Poster:20][Timestamp:19]` |
+| **applications.dat** | 341 bytes | `[Username:20][JobID:6][Title:100][Employer:100][Location:100][Timestamp:19]` |
+| **messages.dat** | 259 bytes | `[Sender:20][Recipient:20][Content:200][Timestamp:19]` |
 
-### connections.dat (269 bytes/record)
-```
-Format: [Sender: 20][Recipient: 20][Status: 10][Message: 200][Timestamp: 19]
-Status: PENDING or ACCEPTED
-Example: AdminUser           ProfSmith           ACCEPTED    ...
-```
+**Experience Entry** (450 bytes): Title(100), Company(100), Dates(50), Description(200)
 
-### jobs.dat (595 bytes/record)
-```
-Format: [JobID: 6][Title: 100][Description: 200][Employer: 100]
-        [Location: 100][Salary: 50][Poster: 20][Timestamp: 19]
-Example: 000001Software Engineer    ...
-```
+**Education Entry** (250 bytes): Degree(100), University(100), Years(50)
 
-### applications.dat (341 bytes/record)
-```
-Format: [Username: 20][JobID: 6][Title: 100][Employer: 100]
-        [Location: 100][Timestamp: 19]
-```
+**Connection Status Values:** `PENDING` or `ACCEPTED`
 
-### messages.dat (259 bytes/record)
-```
-Format: [Sender: 20][Recipient: 20][Content: 200][Timestamp: 19]
-Timestamp Format: YYYYMMDDHHMMSS (14 digits + 5 spaces padding)
-```
+**Timestamp Format:** `YYYYMMDDHHMMSS` (14 digits + 5 spaces = 19 bytes)
 
 ---
 
 ## Testing
 
-### Test Suite Structure
+### Test Suite
 
-The project includes 11 input/output pairs:
+The project includes 11 input/output file pairs:
 
-1. **InCollege-Input.txt / InCollege-Output.txt** - Epic 10 sample (job search and messaging)
-2. **Test 1** - Edge: No messages
-3. **Test 2** - Edge: No applications
-4. **Test 3** - Positive: Send message
-5. **Test 4** - Positive: Multiple applications
-6. **Test 5** - Negative: Non-existent user
-7. **Test 6** - Negative: Not connected
-8. **Test 7** - Positive: Browse and view
-9. **Test 8** - Negative: Invalid job number
-10. **Test 9** - Edge: Message too long
-11. **Test 10** - Edge: View without applying
+- **InCollege-Input.txt / InCollege-Output.txt** - Epic 10 reference sample
+- **Test 1-10** - Located in `Epic10-Storyx-Test-Input/` and `Epic10-Storyx-Test-Output/`
+  - 3 Positive tests (send message, multiple applications, browse and view)
+  - 3 Negative tests (non-existent user, not connected, invalid job number)
+  - 4 Edge cases (no messages, no applications, message too long, view without applying)
 
 ### Running Tests
 
-**Individual Test:**
+**Single Test:**
 ```bash
 rm -f applications.dat && touch applications.dat
 cp Epic10-Storyx-Test-Input/InCollege-Input1.txt InCollege-Input.txt
 ./InCollege
-cat InCollege-Output.txt
 ```
 
 **All Tests:**
@@ -460,7 +418,7 @@ for f in Epic10-Storyx-Test-Input/InCollege-Input*.txt; do
 done
 ```
 
-**Compare Outputs:**
+**Verify Output:**
 ```bash
 diff InCollege-Output.txt Epic10-Storyx-Test-Output/InCollege-Output1.txt
 ```
@@ -469,152 +427,80 @@ diff InCollege-Output.txt Epic10-Storyx-Test-Output/InCollege-Output1.txt
 
 ## Troubleshooting
 
-### Common Issues
+### Common Issues and Solutions
 
-**Issue: File not found / File status errors**
+**File not found / Status errors**
 ```bash
-# Solution: Ensure all data files exist
 touch accounts.dat profiles.dat connections.dat jobs.dat applications.dat messages.dat
 chmod 644 *.dat
 ```
 
-**Issue: Output doesn't match expected**
+**Output doesn't match expected**
 ```bash
-# Solution: Clear applications.dat before each test
-rm -f applications.dat && touch applications.dat
+rm -f applications.dat && touch applications.dat  # Clear before each test
 ```
 
-**Issue: "User not found" when sending message**
+**"User not found" when messaging**
 - Verify username spelling (case-sensitive)
-- Ensure you're connected with recipient (ACCEPTED status in connections.dat)
-- Check that recipient account exists in accounts.dat
+- Check connection status is ACCEPTED in `connections.dat`
+- Confirm user exists in `accounts.dat`
 
-**Issue: Input file not read correctly**
+**Input file not reading correctly**
 ```bash
-# Solution: Fix line endings (Unix LF, not Windows CRLF)
-dos2unix InCollege-Input.txt
-# or
-sed -i 's/\r$//' InCollege-Input.txt
+dos2unix InCollege-Input.txt     # Fix line endings
+sed -i 's/\r$//' InCollege-Input.txt  # Alternative
 ```
 
-**Issue: Compilation errors with OCCURS**
+**Compilation errors**
 ```bash
-# Solution: Ensure GNU COBOL 3.0+
-cobc --version
+cobc --version  # Ensure GNU COBOL 3.0+
 ```
 
-**Issue: "Maximum of 5 accounts reached"**
+**"Maximum of 5 accounts reached"**
 ```bash
-# Solution: View/reset accounts
-cat accounts.dat | wc -l
-rm accounts.dat && touch accounts.dat  # WARNING: Deletes all accounts
+cat accounts.dat | wc -l              # View count
+rm accounts.dat && touch accounts.dat  # Reset (WARNING: deletes all)
 ```
 
-### Debugging Commands
+### Debugging
 
 ```bash
-# View data file contents
+# View data files
 cat accounts.dat
 
 # Count records
 wc -l accounts.dat
 
-# Run with error logging
+# Run with logging
 ./InCollege < InCollege-Input.txt 2>&1 | tee debug.log
 
-# Compare with working example
+# Compare with reference
 diff InCollege-Input.txt Epic10-Storyx-Test-Input/InCollege-Input1.txt
 ```
 
 ---
 
-## Project Structure
-
-```
-InCollege-Epic9/
-├── InCollege.cob                    # COBOL source code
-├── InCollege                        # Compiled executable
-├── InCollege-Input.txt              # Input file
-├── InCollege-Output.txt             # Output file
-├── Dockerfile                       # Docker configuration
-├── README.md                        # This documentation
-├── Roles.txt                        # Team roles
-├── Data Files
-│   ├── accounts.dat                 # User accounts
-│   ├── profiles.dat                 # User profiles
-│   ├── connections.dat              # User connections
-│   ├── jobs.dat                     # Job postings
-│   ├── applications.dat             # Job applications
-│   └── messages.dat                 # User messages
-├── Epic10-Storyx-Test-Input/        # 10 test input files
-│   ├── InCollege-Input1.txt
-│   └── ... (through Input10.txt)
-├── Epic10-Storyx-Test-Output/       # 10 test output files
-│   ├── InCollege-Output1.txt
-│   └── ... (through Output10.txt)
-└── Epics/                           # Requirement documents
-    └── Epic1.pdf through Epic10.pdf
-```
-
----
-
-## Features by Epic
-
-**Epic 1-3:** User authentication, account creation (max 5), password validation (8-12 chars, uppercase, digit, special char)
-
-**Epic 4-6:** Profile management (name, university, major, year, about), experience (3 entries), education (3 entries), profile search
-
-**Epic 7:** Professional networking (send/accept/decline connection requests, view network)
-
-**Epic 8-9:** Job search (post jobs, browse listings, view details, apply, track applications)
-
-**Epic 10:** Messaging system (send to connected users, view messages, 200 char limit, validation)
-
-**Additional:** Learn a New Skill module (4 courses)
-
----
-
 ## Important Notes
 
-1. **Data Persistence:** All `.dat` files persist between runs. Clear `applications.dat` before tests for consistent results.
+1. **Data Persistence:** All `.dat` files persist between runs. Always clear `applications.dat` before tests.
 
-2. **Input Format:** Application reads exclusively from `InCollege-Input.txt`. Each line = one input. No blank lines mid-sequence.
+2. **Input Format:** Application reads from `InCollege-Input.txt` only. Each line = one input. No blank lines mid-sequence. Must end with newline.
 
-3. **Output:** Written to both console and `InCollege-Output.txt`. Variable-length records eliminate trailing spaces.
+3. **Output Format:** Written to both console and `InCollege-Output.txt`. Variable-length records (1-500 chars) eliminate trailing spaces.
 
-4. **Connections:** Messages only work between ACCEPTED connections. Connection requests must be accepted first.
+4. **Connection Requirements:** Messages can only be sent to users with ACCEPTED connection status. Requests must be accepted before messaging.
 
-5. **Validation:** Usernames (20 char max, unique), Passwords (8-12 char requirements), Messages (200 char max), Accounts (5 max)
+5. **Validation Rules:**
+   - Usernames: Max 20 characters, must be unique
+   - Passwords: 8-12 characters, 1 uppercase, 1 digit, 1 special character (!@#$%^&*())
+   - Messages: Max 200 characters
+   - System: Max 5 user accounts
+   - Graduation Year: 1900-2100
 
-6. **Timestamps:** Format YYYYMMDDHHMMSS (e.g., 20251116120000 = Nov 16, 2025, 12:00:00 PM)
-
----
-
-## Quick Reference
-
-```bash
-# Essential Commands
-cobc -x InCollege.cob -o InCollege          # Compile
-./InCollege < InCollege-Input.txt           # Run
-cat InCollege-Output.txt                    # View output
-rm -f applications.dat && touch applications.dat  # Clear apps
-diff Output1.txt Output2.txt                # Compare outputs
-```
-
-**Menu Codes:** Login(1=Login,2=Create) | Main(1-9) | Jobs(1=Post,2=Browse,3=Apps,4=Back) | Messages(1=Send,2=View,3=Back)
+6. **Timestamps:** All timestamps use `YYYYMMDDHHMMSS` format (e.g., 20251116120000 = Nov 16, 2025, 12:00 PM)
 
 ---
 
-## Support
+## License
 
-- **Epic Documents:** See `Epics/` folder for detailed requirements
-- **Team Contacts:** Refer to `Roles.txt`
-- **Test Examples:** Use `Epic10-Storyx-Test-Input/` for reference
-
----
-
-## Version
-
-**Current:** Epic 10 (Messaging System)
-
-**Previous:** Epic 9 (Job Applications) | Epic 8 (Job Search) | Epic 7 (Networking) | Epic 4-6 (Profiles) | Epic 1-3 (Authentication)
+Developed as part of a Software Engineering course curriculum.
