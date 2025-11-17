@@ -20,7 +20,16 @@ Enter your choice:
 2. View My Messages
 3. Back to Main Menu
 Enter your choice:
-View My Messages is under construction.
+--- Your Messages ---
+From: Devante Johnson
+Message: Hi Jose! Hope your Epic 9 implementation is working well. Greetings fro
+(Sent: 2025-11-09 15:00)
+---
+From: ThisIsTestUsr
+Message: Hey Jose! Just wanted to test the messaging system. This message is fro
+(Sent: 2025-11-09 15:01)
+---
+------------------------
 --- Messages Menu ---
 1. Send a New Message
 2. View My Messages

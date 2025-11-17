@@ -1,0 +1,51 @@
+PS C:\Users\VPTK2\Music\INCollege\InCollege-Epic9> docker run --rm -v "${PWD}:/data" `
+>>   -e COB_FILE_PATH="/data" `
+>>   -e INCOLLEGE_INPUT_TXT="/data/InCollege-Input.txt" `
+>>   -e INCOLLEGE_OUTPUT_TXT="/data/InCollege-Output.txt" `
+>>   -e INCOLLEGE_TEST_TXT="/data/InCollege-Test.txt" `
+>>   -e ROLES_TXT="/data/Roles.txt" `
+>>   -e ACCOUNTS_DAT="/data/accounts.dat" `
+>>   cobol-app
+Welcome to InCollege!
+1. Log In
+2. Create New Account
+Enter your choice:
+Please enter username:
+Please enter password:
+You have successfully logged in.
+Welcome, MichaelTorres!
+1. Create/Edit Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
+7. Search for a job
+8. Messages
+Enter your choice:
+--- Messages Menu ---
+1. Send a New Message
+2. View My Messages
+3. Back to Main Menu
+Enter your choice:
+--- Your Messages ---
+From: Jose Martinez
+Message: Testing special characters: !@#$%^&*()_+{}|:"<>?`~[]\;',./
+(Sent: 2025-11-12 15::2)
+---
+------------------------
+--- Messages Menu ---
+1. Send a New Message
+2. View My Messages
+3. Back to Main Menu
+Enter your choice:
+1. Create/Edit Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
+7. Search for a job
+8. Messages
+Enter your choice:
+PS C:\Users\VPTK2\Music\INCollege\InCollege-Epic9>
