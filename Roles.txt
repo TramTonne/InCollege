@@ -1,7 +1,8 @@
-Epic #7 - User Profile
+Epic #10
 
-Scrum Master: Torres, Michael
-Coder #1: Tapadia, Venktesh
-Coder #2: Telapalli, Karthikeya
-Tester #1: Thomas, Gloria
-Tester #2: Ton, Nu Quynh Tram
+Scrum Master: Telapalli, Karthikeya Torres, Michael
+Coder #1: Torres, Michael
+Coder #2: Tapadia, Venktesh
+Tester #1: Ton, Nu Quynh Tram
+
+Tester #2: Thomas, Gloria
