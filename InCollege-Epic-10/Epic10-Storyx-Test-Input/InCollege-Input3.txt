@@ -1,0 +1,10 @@
+1
+AdminUser
+Pass123!
+8
+1
+ProfSmith
+This message is intentionally very long to test the 200 character limit validation in the messaging system. It needs to exceed exactly 200 characters to trigger the error message. I am adding more text here to ensure it goes over the limit and validates properly for this edge case test scenario.
+3
+9
+
