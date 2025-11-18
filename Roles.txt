@@ -1,8 +1,6 @@
-Epic #10
-
-Scrum Master: Telapalli, Karthikeya Torres, Michael
-Coder #1: Torres, Michael
-Coder #2: Tapadia, Venktesh
-Tester #1: Ton, Nu Quynh Tram
-
-Tester #2: Thomas, Gloria
+Requirement Epic #10 - System Enhancements & Bug Fixing
+Scrum Master: Telapalli, Karthikeya
+Developer #1: Thomas, Gloria
+Developer #2: Ton, Nu Quynh Tram
+Tester #1: Tapadia, Venktesh
+Tester #2: Torres, Michael

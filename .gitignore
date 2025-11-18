@@ -1,0 +1,25 @@
+# macOS system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# COBOL compiled files
+InCollege
+
+# Data files (optional - depends if you want to track them)
+# *.dat
+
+# Temporary files
+*.tmp
+temp-*
+
+# Editor files
+.vscode/
+.idea/
+*~
+
+# Test output files (optional)
+TEST_SUITE_SUMMARY.txt
+debug.log
