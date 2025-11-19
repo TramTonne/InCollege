@@ -1,8 +1,8 @@
-IDENTIFICATION DIVISION.
-       PROGRAM-ID. INCOLLEGE.
-       ENVIRONMENT DIVISION.
-       INPUT-OUTPUT SECTION.
-       FILE-CONTROL.
+IDENTIFICATION DIVISION. *> The main program for the InCollege social networking application.
+       PROGRAM-ID. INCOLLEGE. 
+       ENVIRONMENT DIVISION. 
+       INPUT-OUTPUT SECTION. 
+       FILE-CONTROL. 
            SELECT INPUT-FILE ASSIGN TO "InCollege-Input.txt"
                ORGANIZATION IS LINE SEQUENTIAL.
            SELECT OUTPUT-FILE ASSIGN TO "InCollege-Output.txt"
@@ -35,9 +35,9 @@ IDENTIFICATION DIVISION.
                ORGANIZATION IS LINE SEQUENTIAL
                FILE STATUS IS MESSAGES-STATUS.
 
-       DATA DIVISION.
+       DATA DIVISION. 
        FILE SECTION.
-       FD INPUT-FILE.
+       FD INPUT-FILE. 
        01 INPUT-RECORD PIC X(500).
 
        FD OUTPUT-FILE
@@ -51,8 +51,8 @@ IDENTIFICATION DIVISION.
           05 ACCOUNT-PASSWORD PIC X(12).
           05 ACCOUNT-PASSWORD-LENGTH PIC 9(2).
 
-       FD PROFILES-FILE.
-       01 PROFILE-RECORD.
+       FD PROFILES-FILE. *> User profiles data file
+       01 PROFILE-RECORD. 
           05 PROFILE-USERNAME PIC X(20).
           05 PROFILE-FIRST-NAME PIC X(50).
           05 PROFILE-LAST-NAME PIC X(50).
@@ -72,7 +72,7 @@ IDENTIFICATION DIVISION.
              10 EDU-UNIVERSITY PIC X(100).
              10 EDU-YEARS PIC X(50).
 
-       FD TEMP-PROFILES-FILE.
+       FD TEMP-PROFILES-FILE.*> Temporary user profiles data file
        01 TEMP-PROFILE-RECORD.
           05 TEMP-PROFILE-USERNAME PIC X(20).
           05 TEMP-PROFILE-FIRST-NAME PIC X(50).
@@ -93,7 +93,7 @@ IDENTIFICATION DIVISION.
              10 TEMP-EDU-UNIVERSITY PIC X(100).
              10 TEMP-EDU-YEARS PIC X(50).
 
-       FD CONNECTIONS-FILE.
+       FD CONNECTIONS-FILE.*> Connections data file
        01 CONNECTION-RECORD.
           05 CONN-SENDER-USERNAME PIC X(20).
           05 CONN-RECIPIENT-USERNAME PIC X(20).
@@ -101,7 +101,7 @@ IDENTIFICATION DIVISION.
           05 CONN-MESSAGE PIC X(200).
           05 CONN-TIMESTAMP PIC X(19).
 
-       FD TEMP-CONNECTIONS-FILE.
+       FD TEMP-CONNECTIONS-FILE. *> Temporary connections data file
        01 TEMP-CONNECTION-RECORD.
           05 TEMP-CONN-SENDER-USERNAME PIC X(20).
           05 TEMP-CONN-RECIPIENT-USERNAME PIC X(20).
@@ -109,7 +109,7 @@ IDENTIFICATION DIVISION.
           05 TEMP-CONN-MESSAGE PIC X(200).
           05 TEMP-CONN-TIMESTAMP PIC X(19).
 
-       FD JOBS-FILE.
+       FD JOBS-FILE. *> Job postings data file
        01 JOB-RECORD.
           05 JOB-ID PIC 9(6).
           05 JOB-TITLE PIC X(100).
@@ -196,7 +196,7 @@ IDENTIFICATION DIVISION.
           05 WS-APP-COUNT PIC 9(3) VALUE 0.
           05 WS-MSG-COUNT PIC 9(6) VALUE 0.
 
-       01 WS-INPUT-DATA.
+       01 WS-INPUT-DATA. *> Input data from user
           05 WS-MENU-CHOICE PIC X(2).
           05 WS-USERNAME PIC X(20).
           05 WS-PASSWORD PIC X(12).
@@ -220,7 +220,7 @@ IDENTIFICATION DIVISION.
           05 WS-MSG-RECIPIENT PIC X(20).
           05 WS-MSG-CONTENT PIC X(200).
 
-       01 WS-PROFILE-DATA.
+       01 WS-PROFILE-DATA.*> Profile data structure
           05 WS-FIRST-NAME PIC X(50).
           05 WS-LAST-NAME PIC X(50).
           05 WS-UNIVERSITY PIC X(100).
@@ -228,13 +228,13 @@ IDENTIFICATION DIVISION.
           05 WS-GRAD-YEAR PIC X(4).
           05 WS-ABOUT PIC X(200).
 
-       01 WS-EXPERIENCE-DATA.
+       01 WS-EXPERIENCE-DATA.*> Experience data structure
           05 WS-EXP-TITLE PIC X(100).
           05 WS-EXP-COMPANY PIC X(100).
           05 WS-EXP-DATES PIC X(50).
           05 WS-EXP-DESC PIC X(200).
 
-       01 WS-EDUCATION-DATA.
+       01 WS-EDUCATION-DATA.*> Education data structure
           05 WS-EDU-DEGREE PIC X(100).
           05 WS-EDU-UNIVERSITY PIC X(100).
           05 WS-EDU-YEARS PIC X(50).
@@ -245,7 +245,7 @@ IDENTIFICATION DIVISION.
        01 WS-CONN-ACTION PIC X(2).
        01 WS-DISPLAY-COUNTER PIC Z(5)9.
 
-       01 FILE-STATUSES.
+       01 FILE-STATUSES.*> File status codes
           05 ACCOUNTS-STATUS PIC XX.
           05 PROFILES-STATUS PIC XX.
           05 TEMP-PROFILES-STATUS PIC XX.
@@ -256,7 +256,7 @@ IDENTIFICATION DIVISION.
           05 APPLICATIONS-STATUS PIC XX.
           05 MESSAGES-STATUS PIC XX.
 
-       01 WS-CONSTANTS.
+       01 WS-CONSTANTS. *> Constant messages
           05 WS-WELCOME-MSG PIC X(30) VALUE "Welcome to InCollege!".
           05 WS-LOGIN-PROMPT PIC X(9) VALUE "1. Log In".
           05 WS-CREATE-PROMPT PIC X(21) VALUE "2. Create New Account".
@@ -307,7 +307,7 @@ IDENTIFICATION DIVISION.
           05 WS-MSG-MENU-2 PIC X(19) VALUE "2. View My Messages".
           05 WS-MSG-MENU-3 PIC X(20) VALUE "3. Back to Main Menu".
 
-       PROCEDURE DIVISION.
+       PROCEDURE DIVISION.*> The main procedure for the InCollege application
        MAIN-PROCEDURE.
            OPEN INPUT INPUT-FILE
            OPEN OUTPUT OUTPUT-FILE
@@ -328,7 +328,7 @@ IDENTIFICATION DIVISION.
            PERFORM CLEANUP
            STOP RUN.
 
-       SHOW-LOGIN-MENU.
+       SHOW-LOGIN-MENU.*> Display login/create account menu and handle user choice
            MOVE FUNCTION TRIM(WS-LOGIN-PROMPT) TO OUTPUT-RECORD
            COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
            WRITE OUTPUT-RECORD
@@ -359,7 +359,7 @@ IDENTIFICATION DIVISION.
                    DISPLAY FUNCTION TRIM(WS-INVALID-CHOICE)
            END-EVALUATE.
 
-       LOGIN-USER.
+       LOGIN-USER.*> Handle user login process
            MOVE FUNCTION TRIM(WS-USERNAME-PROMPT) TO OUTPUT-RECORD
            COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
            WRITE OUTPUT-RECORD
@@ -423,7 +423,7 @@ IDENTIFICATION DIVISION.
                CLOSE ACCOUNTS-FILE
            END-IF.
 
-       CREATE-ACCOUNT.
+       CREATE-ACCOUNT.*> Handle new account creation process
            PERFORM COUNT-ACCOUNTS
            IF WS-ACCOUNT-COUNT >= 5
                MOVE "Maximum of 5 accounts reached!" TO OUTPUT-RECORD
@@ -489,7 +489,7 @@ IDENTIFICATION DIVISION.
            WRITE OUTPUT-RECORD
            DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG).
 
-       COUNT-ACCOUNTS.
+       COUNT-ACCOUNTS.*> Count existing accounts in the accounts file
            MOVE 0 TO WS-ACCOUNT-COUNT
            OPEN INPUT ACCOUNTS-FILE
            IF ACCOUNTS-STATUS = "00"
@@ -503,7 +503,7 @@ IDENTIFICATION DIVISION.
                CLOSE ACCOUNTS-FILE
            END-IF.
 
-       CHECK-USER-EXISTS.
+       CHECK-USER-EXISTS.*> Check if a username already exists in the accounts file
            MOVE 'N' TO WS-ACCOUNT-EXISTS
            OPEN INPUT ACCOUNTS-FILE
            IF ACCOUNTS-STATUS = "00" OR ACCOUNTS-STATUS = "97"
@@ -520,7 +520,7 @@ IDENTIFICATION DIVISION.
                CLOSE ACCOUNTS-FILE
            END-IF.
 
-       VALIDATE-PASSWORD.
+       VALIDATE-PASSWORD. *> Validate password complexity requirements
            MOVE 'N' TO WS-VALID-PASSWORD
            MOVE 0 TO WS-CHAR-COUNT
            MOVE 0 TO WS-UPPER-COUNT
@@ -563,7 +563,7 @@ IDENTIFICATION DIVISION.
                MOVE 'Y' TO WS-VALID-PASSWORD
            END-IF.
 
-       SAVE-ACCOUNT.
+       SAVE-ACCOUNT. *> Save new account to the accounts file
            OPEN EXTEND ACCOUNTS-FILE
            MOVE SPACES TO ACCOUNT-RECORD
            MOVE FUNCTION TRIM(WS-USERNAME) TO ACCOUNT-USERNAME
@@ -574,7 +574,7 @@ IDENTIFICATION DIVISION.
            CLOSE ACCOUNTS-FILE
            ADD 1 TO WS-ACCOUNT-COUNT.
 
-       SHOW-MAIN-MENU.
+       SHOW-MAIN-MENU.*> Display main menu and handle user choice
            MOVE FUNCTION TRIM(WS-MAIN-MENU-HEADER) TO OUTPUT-RECORD
            COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
            WRITE OUTPUT-RECORD
@@ -652,7 +652,7 @@ IDENTIFICATION DIVISION.
                    DISPLAY FUNCTION TRIM(WS-INVALID-CHOICE)
            END-EVALUATE.
 
-       CREATE-EDIT-PROFILE.
+       CREATE-EDIT-PROFILE.*> Create or edit user profile
            MOVE "Enter First Name:" TO OUTPUT-RECORD
            COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
            WRITE OUTPUT-RECORD
@@ -728,7 +728,7 @@ IDENTIFICATION DIVISION.
            WRITE OUTPUT-RECORD
            DISPLAY "Profile saved successfully!".
 
-       VALIDATE-GRAD-YEAR.
+       VALIDATE-GRAD-YEAR.*> Validate graduation year input
            MOVE 'N' TO WS-VALID-GRAD-YEAR
            IF FUNCTION TEST-NUMVAL(WS-GRAD-YEAR) = 0
                IF FUNCTION NUMVAL(WS-GRAD-YEAR) >= 1900 AND
@@ -737,7 +737,7 @@ IDENTIFICATION DIVISION.
                END-IF
            END-IF.
 
-       SAVE-PROFILE.
+       SAVE-PROFILE.*> Save or update user profile in the profiles file
            MOVE 'N' TO WS-PROFILE-UPDATED
            PERFORM CHECK-PROFILE-EXISTS
            IF WS-PROFILE-FOUND = 'Y'
@@ -746,7 +746,7 @@ IDENTIFICATION DIVISION.
                PERFORM CREATE-NEW-PROFILE
            END-IF.
 
-       CHECK-PROFILE-EXISTS.
+       CHECK-PROFILE-EXISTS.*> Check if user profile already exists
            MOVE 'N' TO WS-PROFILE-FOUND
            OPEN INPUT PROFILES-FILE
            IF PROFILES-STATUS = "00" OR PROFILES-STATUS = "97"
@@ -763,7 +763,7 @@ IDENTIFICATION DIVISION.
                CLOSE PROFILES-FILE
            END-IF.
 
-       UPDATE-EXISTING-PROFILE.
+       UPDATE-EXISTING-PROFILE.*> Update existing user profile
            OPEN INPUT PROFILES-FILE
            OPEN OUTPUT TEMP-PROFILES-FILE
 
@@ -816,7 +816,7 @@ IDENTIFICATION DIVISION.
            CALL "SYSTEM" USING "rm profiles.dat 2>/dev/null || del profiles.dat 2>nul || del profiles.dat"
            CALL "SYSTEM" USING "mv temp-profiles.dat profiles.dat 2>/dev/null || ren temp-profiles.dat profiles.dat || ren temp-profiles.dat profiles.dat".
 
-       CREATE-NEW-PROFILE.
+       CREATE-NEW-PROFILE.*> Create a new user profile
            OPEN EXTEND PROFILES-FILE
            MOVE SPACES TO PROFILE-RECORD
            MOVE FUNCTION TRIM(WS-USERNAME) TO PROFILE-USERNAME
@@ -831,12 +831,12 @@ IDENTIFICATION DIVISION.
            WRITE PROFILE-RECORD
            CLOSE PROFILES-FILE.
 
-       VIEW-MY-PROFILE.
+       VIEW-MY-PROFILE.*> View the logged-in user's profile
            MOVE FUNCTION TRIM(WS-USERNAME) TO WS-SEARCH-USERNAME
            MOVE 'N' TO WS-VIEW-SEARCH
            PERFORM DISPLAY-PROFILE.
 
-       SEARCH-USER.
+       SEARCH-USER.*> Search for another user's profile
            MOVE "Enter username to search:" TO OUTPUT-RECORD
            COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
            WRITE OUTPUT-RECORD
@@ -850,7 +850,7 @@ IDENTIFICATION DIVISION.
            MOVE 'Y' TO WS-VIEW-SEARCH
            PERFORM DISPLAY-PROFILE.
 
-       DISPLAY-PROFILE.
+       DISPLAY-PROFILE. *> Display user profile based on search criteria
            MOVE 'N' TO WS-PROFILE-FOUND
            OPEN INPUT PROFILES-FILE
            IF PROFILES-STATUS = "00" OR PROFILES-STATUS = "97"
@@ -881,7 +881,7 @@ IDENTIFICATION DIVISION.
                END-IF
            END-IF.
 
-       SHOW-PROFILE-DETAILS.
+       SHOW-PROFILE-DETAILS. *> Show detailed profile information
            MOVE "--- Profile ---" TO OUTPUT-RECORD
            COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
            WRITE OUTPUT-RECORD
@@ -1035,7 +1035,7 @@ IDENTIFICATION DIVISION.
            WRITE OUTPUT-RECORD
            DISPLAY "-------------------".
 
-       LEARN-SKILL.
+       LEARN-SKILL. *> Display skill learning options and handle user choice
            MOVE "--- Learn a New Skill ---" TO OUTPUT-RECORD
            COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
            WRITE OUTPUT-RECORD
@@ -1103,7 +1103,7 @@ IDENTIFICATION DIVISION.
                    DISPLAY FUNCTION TRIM(WS-INVALID-CHOICE)
            END-EVALUATE.
 
-       VIEW-PENDING-CONNECTIONS.
+       VIEW-PENDING-CONNECTIONS. *> View and manage pending connection requests
            MOVE "--- Pending Connection Requests ---" TO OUTPUT-RECORD
            COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
            WRITE OUTPUT-RECORD
@@ -1192,7 +1192,7 @@ IDENTIFICATION DIVISION.
            WRITE OUTPUT-RECORD
            DISPLAY "-------------------------------------".
 
-       VIEW-NETWORK.
+       VIEW-NETWORK. *> View accepted connections in the user's network
            MOVE "--- My Network ---" TO OUTPUT-RECORD
            COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
            WRITE OUTPUT-RECORD
@@ -1239,7 +1239,7 @@ IDENTIFICATION DIVISION.
            WRITE OUTPUT-RECORD
            DISPLAY "------------------".
 
-       HANDLE-CONNECTION-REQUEST.
+       HANDLE-CONNECTION-REQUEST. *> Handle sending connection request to another user
            MOVE WS-SEARCH-USERNAME TO WS-TARGET-USERNAME
            PERFORM CHECK-IF-ALREADY-CONNECTED-OR-PENDING
            IF WS-CONNECTION-FOUND = 'Y'
@@ -1289,7 +1289,7 @@ IDENTIFICATION DIVISION.
                DISPLAY "Connection request sent!"
            END-IF.
 
-       CHECK-IF-ALREADY-CONNECTED-OR-PENDING.
+       CHECK-IF-ALREADY-CONNECTED-OR-PENDING. *> Check if already connected or pending
            MOVE 'N' TO WS-CONNECTION-FOUND
            OPEN INPUT CONNECTIONS-FILE
            IF CONNECTIONS-STATUS = "00" OR CONNECTIONS-STATUS = "97"
@@ -1312,7 +1312,7 @@ IDENTIFICATION DIVISION.
                CLOSE CONNECTIONS-FILE
            END-IF.
 
-       SAVE-CONNECTION-REQUEST.
+       SAVE-CONNECTION-REQUEST. *> Save connection request to connections file
            OPEN EXTEND CONNECTIONS-FILE
            MOVE SPACES TO CONNECTION-RECORD
            MOVE FUNCTION TRIM(WS-USERNAME) TO CONN-SENDER-USERNAME
@@ -1323,7 +1323,7 @@ IDENTIFICATION DIVISION.
            WRITE CONNECTION-RECORD
            CLOSE CONNECTIONS-FILE.
 
-       PROCESS-CONNECTION-REQUEST.
+       PROCESS-CONNECTION-REQUEST. *> Process selected connection request
            MOVE 0 TO WS-INDEX
            MOVE SPACES TO WS-SELECTED-CONN-SENDER
            OPEN INPUT CONNECTIONS-FILE
@@ -1381,7 +1381,7 @@ IDENTIFICATION DIVISION.
                END-IF
            END-IF.
 
-       UPDATE-CONNECTION-STATUS-ACCEPT.
+       UPDATE-CONNECTION-STATUS-ACCEPT. *> Update connection status to accepted
            OPEN INPUT CONNECTIONS-FILE
            OPEN OUTPUT TEMP-CONNECTIONS-FILE
 
@@ -1411,7 +1411,7 @@ IDENTIFICATION DIVISION.
            CALL "SYSTEM" USING "rm connections.dat 2>/dev/null || del connections.dat 2>nul || del connections.dat"
            CALL "SYSTEM" USING "mv temp-connections.dat connections.dat 2>/dev/null || ren temp-connections.dat connections.dat || ren temp-connections.dat connections.dat".
 
-       UPDATE-CONNECTION-STATUS-DECLINE.
+       UPDATE-CONNECTION-STATUS-DECLINE. *> Remove declined connection request
            OPEN INPUT CONNECTIONS-FILE
            OPEN OUTPUT TEMP-CONNECTIONS-FILE
 
@@ -1437,7 +1437,7 @@ IDENTIFICATION DIVISION.
            CALL "SYSTEM" USING "rm connections.dat 2>/dev/null || del connections.dat 2>nul || del connections.dat"
            CALL "SYSTEM" USING "mv temp-connections.dat connections.dat 2>/dev/null || ren temp-connections.dat connections.dat || ren temp-connections.dat connections.dat".
 
-       JOB-SEARCH-MENU.
+       JOB-SEARCH-MENU.*> Display job search menu and handle user choices
            MOVE 'N' TO WS-JOB-EXIT-FLAG
            PERFORM UNTIL WS-JOB-EXIT-FLAG = 'Y' OR WS-END-OF-FILE
                MOVE WS-JOB-MENU-HEADER TO OUTPUT-RECORD
@@ -1488,7 +1488,7 @@ IDENTIFICATION DIVISION.
                END-EVALUATE
            END-PERFORM.
 
-       POST-JOB.
+       POST-JOB. *> Post a new job listing
            MOVE WS-JOB-TITLE-PROMPT TO OUTPUT-RECORD
            COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
            WRITE OUTPUT-RECORD
@@ -1545,7 +1545,7 @@ IDENTIFICATION DIVISION.
            WRITE OUTPUT-RECORD
            DISPLAY FUNCTION TRIM(WS-JOB-POSTED-SUCCESS).
 
-       SAVE-JOB-POSTING.
+       SAVE-JOB-POSTING. *> Save the new job posting to jobs file
            PERFORM LOAD-JOB-COUNT
 
            OPEN EXTEND JOBS-FILE
@@ -1563,7 +1563,7 @@ IDENTIFICATION DIVISION.
            ADD 1 TO WS-NEXT-JOB-ID
            ADD 1 TO WS-JOB-COUNT.
 
-       LOAD-JOB-COUNT.
+       LOAD-JOB-COUNT. *> Load current job count and determine next job ID
            MOVE 0 TO WS-JOB-COUNT
            MOVE 1 TO WS-NEXT-JOB-ID
            OPEN INPUT JOBS-FILE
@@ -1581,7 +1581,7 @@ IDENTIFICATION DIVISION.
                CLOSE JOBS-FILE
            END-IF.
 
-       BROWSE-JOBS.
+       BROWSE-JOBS.*> Browse available job listings and view details
            PERFORM UNTIL 1 = 0
                MOVE 0 TO WS-BROWSE-COUNT
                MOVE "--- Available Job Listings ---" TO OUTPUT-RECORD
@@ -1656,7 +1656,7 @@ IDENTIFICATION DIVISION.
                END-IF
            END-PERFORM.
 
-       SHOW-JOB-DETAILS.
+       SHOW-JOB-DETAILS. *> Show detailed information about a selected job
            MOVE 0 TO WS-INDEX
            MOVE 'N' TO WS-JOB-FOUND
            OPEN INPUT JOBS-FILE
@@ -1773,7 +1773,7 @@ IDENTIFICATION DIVISION.
                END-EVALUATE
            END-IF.
 
-       APPLY-FOR-JOB.
+       APPLY-FOR-JOB. *> Apply for the selected job
            OPEN EXTEND APPLICATIONS-FILE
            MOVE SPACES TO APPLICATION-RECORD
            MOVE WS-USERNAME TO APP-USERNAME
@@ -1798,7 +1798,7 @@ IDENTIFICATION DIVISION.
                    " at " FUNCTION TRIM(WS-DETAIL-EMPLOYER)
                    " has been submitted.".
 
-       VIEW-MY-APPLICATIONS.
+       VIEW-MY-APPLICATIONS. *> View user's job applications
            MOVE "--- Your Job Applications ---" TO OUTPUT-RECORD
            COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
            WRITE OUTPUT-RECORD
@@ -1883,7 +1883,7 @@ IDENTIFICATION DIVISION.
            WRITE OUTPUT-RECORD
            DISPLAY "------------------------------".
 
-       MESSAGES-MENU.
+       MESSAGES-MENU. *> Display messages menu and handle user choices
            MOVE 'N' TO WS-MSG-EXIT-FLAG
            PERFORM UNTIL WS-MSG-EXIT-FLAG = 'Y' OR WS-END-OF-FILE
                MOVE WS-MSG-MENU-HEADER TO OUTPUT-RECORD
@@ -2000,7 +2000,7 @@ IDENTIFICATION DIVISION.
            WRITE OUTPUT-RECORD
            DISPLAY FUNCTION TRIM(WS-DISPLAY-MSG).
 
-       SAVE-MESSAGE.
+       SAVE-MESSAGE. *> Save the message to messages file
            OPEN EXTEND MESSAGES-FILE
            MOVE SPACES TO MESSAGE-RECORD
            MOVE FUNCTION TRIM(WS-USERNAME) TO MSG-SENDER-USERNAME
@@ -2011,7 +2011,7 @@ IDENTIFICATION DIVISION.
            WRITE MESSAGE-RECORD
            CLOSE MESSAGES-FILE.
 
-       CHECK-IF-CONNECTED.
+       CHECK-IF-CONNECTED.*> Check if the user is connected with the target user
            MOVE 'N' TO WS-IS-CONNECTED
            OPEN INPUT CONNECTIONS-FILE
            IF CONNECTIONS-STATUS = "00" OR CONNECTIONS-STATUS = "97"
@@ -2036,7 +2036,7 @@ IDENTIFICATION DIVISION.
                CLOSE CONNECTIONS-FILE
            END-IF.
 
-       VIEW-MY-MESSAGES.
+       VIEW-MY-MESSAGES. *> View messages received by the user
            MOVE "--- Your Messages ---" TO OUTPUT-RECORD
            COMPUTE OUTPUT-LENGTH = FUNCTION LENGTH(FUNCTION TRIM(OUTPUT-RECORD))
            WRITE OUTPUT-RECORD
@@ -2167,7 +2167,7 @@ IDENTIFICATION DIVISION.
                  TO WS-FORMATTED-TIMESTAMP
            END-IF.
 
-       CLEANUP.
+       CLEANUP.*> Close all files before program ends
            CLOSE INPUT-FILE
            CLOSE OUTPUT-FILE
            CLOSE ACCOUNTS-FILE
