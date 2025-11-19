@@ -1,0 +1,51 @@
+Welcome to InCollege!
+1. Log In
+2. Create New Account
+Enter your choice:
+Please enter your username:
+Please enter your password:
+You have successfully logged in.
+Welcome, JoseMartinez!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
+7. Job Search/Internship
+8. Messages
+9. Exit
+Enter your choice:
+--- Learn a New Skill ---
+1. Programming
+2. Communication
+3. Data Analysis
+4. Leadership
+5. Back to Main Menu
+Enter your choice:
+You selected Programming course!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
+7. Job Search/Internship
+8. Messages
+9. Exit
+Enter your choice:
+--- My Network ---
+------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
+7. Job Search/Internship
+8. Messages
+9. Exit
+Enter your choice:
