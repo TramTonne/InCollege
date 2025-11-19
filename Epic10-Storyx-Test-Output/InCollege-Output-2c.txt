@@ -1,0 +1,55 @@
+Welcome to InCollege!
+1. Log In
+2. Create New Account
+Enter your choice:
+Please enter your username:
+Please enter your password:
+Account created successfully!
+Welcome, JoshRivera!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
+7. Job Search/Internship
+8. Messages
+9. Exit
+Enter your choice:
+Enter First Name:
+Enter Last Name:
+Enter University:
+Enter Major:
+Enter Graduation Year (YYYY):
+Enter About (max 200 characters):
+Profile saved successfully!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
+7. Job Search/Internship
+8. Messages
+9. Exit
+Enter your choice:
+--- Profile ---
+Name: Josh Rivera
+University: University of South Florida
+Major: Computer Science
+Graduation Year: 2026
+About: I am Josh.
+-------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Search for User
+4. Learn a New Skill
+5. View My Pending Connection Requests
+6. View My Network
+7. Job Search/Internship
+8. Messages
+9. Exit
+Enter your choice:
